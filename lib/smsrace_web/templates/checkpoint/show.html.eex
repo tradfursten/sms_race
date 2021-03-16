@@ -1,0 +1,28 @@
+<h1>Show Checkpoint</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @checkpoint.name %>
+  </li>
+
+  <li>
+    <strong>Distance:</strong>
+    <%= @checkpoint.distance %>
+  </li>
+
+  <li>
+    <strong>Cutoff:</strong>
+    <%= @checkpoint.cutoff %>
+  </li>
+
+  <li>
+    <strong>Code:</strong>
+    <%= @checkpoint.code %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.checkpoint_path(@conn, :edit, @checkpoint) %></span>
+<span><%= link "Back", to: Routes.checkpoint_path(@conn, :index) %></span>

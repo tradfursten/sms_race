@@ -2,8 +2,16 @@ defmodule SmsraceWeb.PageLive do
   use SmsraceWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{})}
+  def mount(_params, session, socket) do
+    IO.inspect(session)
+    Phoenix.PubSub.subscribe(Smsrace.PubSub, "messages")
+    {:ok, assign(socket, messages: Smsrace.SMSRace.list_messages(), query: "", results: %{})}
+  end
+
+  @impl true
+  def handle_info({:message_saved, message}, %{assigns: %{messages: messages}} = socket) do
+    messages = [message | messages]
+    {:noreply, assign(socket, messages: messages)}
   end
 
   @impl true

@@ -1,0 +1,32 @@
+<h1>Listing Checkpoints</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Distance</th>
+      <th>Cutoff</th>
+      <th>Code</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for checkpoint <- @checkpoints do %>
+    <tr>
+      <td><%= checkpoint.name %></td>
+      <td><%= checkpoint.distance %></td>
+      <td><%= checkpoint.cutoff %></td>
+      <td><%= checkpoint.code %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.checkpoint_path(@conn, :show, checkpoint) %></span>
+        <span><%= link "Edit", to: Routes.checkpoint_path(@conn, :edit, checkpoint) %></span>
+        <span><%= link "Delete", to: Routes.checkpoint_path(@conn, :delete, checkpoint), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Checkpoint", to: Routes.checkpoint_path(@conn, :new) %></span>

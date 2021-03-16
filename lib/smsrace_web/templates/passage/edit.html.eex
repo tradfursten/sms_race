@@ -1,0 +1,5 @@
+<h1>Edit Passage</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.passage_path(@conn, :update, @passage)) %>
+
+<span><%= link "Back", to: Routes.passage_path(@conn, :index) %></span>

@@ -17,10 +17,24 @@ defmodule SmsraceWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :external_api do
+    plug :accepts, ["application/x-www-form-urlencoded"]
+    plug Plug.Parsers,
+      parsers: [:urlencoded]
+  end
+
   scope "/", SmsraceWeb do
     pipe_through :browser
 
+    resources "/races", RaceController
+
     live "/", PageLive, :index
+  end
+
+  scope "/", SmsraceWeb do
+    pipe_through :external_api
+
+    post "/incoming", ExternalApiController, :create
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,5 @@
+<h1>Edit Checkpoint</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.checkpoint_path(@conn, :update, @checkpoint)) %>
+
+<span><%= link "Back", to: Routes.checkpoint_path(@conn, :index) %></span>
