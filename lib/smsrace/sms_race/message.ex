@@ -9,6 +9,9 @@ defmodule Smsrace.SMSRace.Message do
     field :api_id, :string
     field :message, :string
     field :to, :string
+    field :handled, :boolean
+
+    has_one :passage, Smsrace.SMSRace.Passage
 
     timestamps()
   end

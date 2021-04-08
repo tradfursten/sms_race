@@ -5,7 +5,7 @@ Gen phx.gen.context
 Pattern matcha med string nycklar i external api controller
 
 ToDo:
-Enter messages into db in externalApiController
+x Enter messages into db in externalApiController
 Style message list
 Tie messages in live view to specific user? Skip in mvp
 Match message checkpoint and participant and create passage automaticly
@@ -13,6 +13,18 @@ Enable creation of passage in message list
 Secure messages live view and all crud pages
 Create result list live view for a race and a checkpoint (public)
 Deploy to gigalexir - extended
+
+ToDo:
+Vy för att välja participant
+Spara val av participant
+Vy för att väja checkpoint
+Spara val av checkpoint
+Sorerings val för messages
+Filtrera messages, handled, skriva text
+Klickbara länkar i message from
+Länka till en vy för en person
+Länka till en vy för en checkpoint
+
 
 
 Create project
@@ -40,4 +52,14 @@ Generate passage
 Generate messages
 `mix phx.gen.html SMSRace Message messages api_id:string from:string to:string message:string direction:string created:utc_datetime`
 
+
+{:ok, race} = Smsrace.SMSRace.create_race(%{name: "Marsliden 7 sumit", start: DateTime.utc_now()})
+
 Smsrace.SMSRace.create_message(%{api_id: "123", from: "123", to: "123", created: DateTime.utc_now(), direction: "incoming", message: "Hello world"})
+
+
+Smsrace.SMSRace.create_participant(%{name: "Adam", nr: 3, phonenumber: "2", race_id: 2})
+
+Smsrace.SMSRace.create_checkpoint(%{name: "Stöken", code: "stöken", distance: 7, race_id: race.id})
+
+

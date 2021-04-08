@@ -6,7 +6,8 @@ defmodule Smsrace.SMSRace.Participant do
     field :name, :string
     field :nr, :integer
     field :phonenumber, :string
-    field :race_id, :id
+    belongs_to :race, Smsrace.SMSRace.Race
+    has_many :passages, Smsrace.SMSRace.Passage
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule Smsrace.SMSRace.Participant do
   @doc false
   def changeset(participant, attrs) do
     participant
-    |> cast(attrs, [:nr, :name, :phonenumber])
+    |> cast(attrs, [:nr, :name, :phonenumber, :race_id])
     |> validate_required([:nr, :name, :phonenumber])
   end
 end

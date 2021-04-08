@@ -5,7 +5,8 @@ defmodule Smsrace.SMSRace.Race do
   schema "races" do
     field :name, :string
     field :start, :utc_datetime
-    field :user_id, :id
+    belongs_to :user, Smsrace.Accounts.User
+    has_many :checkpoints, Smsrace.SMSRace.Checkpoint
 
     timestamps()
   end

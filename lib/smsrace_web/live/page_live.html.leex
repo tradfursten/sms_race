@@ -1,9 +1,57 @@
 <section class="phx-hero">
-    <h1 class="text-red-500 text-5xl font-bold text-center">Tailwind CSS</h1>
+    <h1 class="text-blue-400 text-5xl font-bold text-center">SMSRace</h1>
 </section>
-
-<ul>
-<%= for message <- @messages do %>
-    <li><%= message.from %>: <%= message.message %></li>
+<div class="flex flex-col items-center">
+<%= if @selection == :messages do %>
+    <%= if @scope == :handled do %>
+        <div class="cursor-pointer text-blue-600">Visa alla</div>
+    <% else %>
+        <div class="cursor-pointer text-blue-600">Visa ej hanterade</div>
+    <% end %>
+    <%= for message <- @messages do %>
+  <article class="sm:grid grid-cols-5 bg-white border-solid border-2 border-gray-200 shadow-sm p-7 relative lg:max-w-2xl sm:p-4 rounded-lg lg:col-span-2 lg:ml-20 m-5">
+  <div class="pt-5 self-center sm:pt-0 sm:pl-10 col-span-4">
+      <div class="col-span-5 flex justify-between">
+        <h2 class="text-gray-800 capitalize text-l font-bold"><%= message.from %></h2>
+        <h3 class="text-gray-800 capitalize text-m font-bold"><%= pretty_print_date(message.created) %></h3>
+      </div>
+      <span class="capitalize inline-block pt-2"><%= message.message %></span>
+        <%= if message.passage do %>
+            <div>
+            <%= if message.passage.participant do %>
+                <span><%= message.passage.participant.nr %>: <%= message.passage.participant.name %></span>
+            <% end %>
+            <%= if message.passage.checkpoint do %>
+                <span>@ <%= message.passage.checkpoint.name %></span>
+            <% else %>
+                <div class="cursor-pointer text-blue-600" phx-click="select-checkpoint" phx-value-message="<%= message.id %>">Koppla checkpoint</span></div>
+            <% end %>
+            </div>
+        <% else  %>
+            <div class="cursor-pointer text-blue-600" phx-click="select-participant" phx-value-message="<%= message.id %>">Koppla deltagare</span></div>
+        <% end %>
+        <div class="cursor-pointer text-blue-600">Markera som hanterad</div>
+  </div>
+</article>
+    <% end %>
 <% end %>
-</ul>
+
+<%= if @selection == :participants do %>
+    <div class="p-5 flex flex-col items">
+        <span class="cursor-pointer text-blue-600" phx-click="home">back</span>
+        <h2 class="text-gray-800 text-l font-bold">Koppla deltagare till meddelande</h2>
+        <div class="text-center"><%= @selected_message.from  %>: <%= @selected_message.message %></div>
+        <%= for participant <- sort_participants(@participants, @selected_message.from) do %>
+            <span phx-click="assign-participant-to-message" phx-value-participant="<%= participant.id %>" class="border-solid border-2 border-gray-200 p-3 shadow-sm rounded-lg"><%= participant.nr %>. <%= participant.name %> (<%= participant.phonenumber %>)</span>
+        <% end %>
+    </div>
+<% end %>
+
+<%= if @selection == :checkpoints do %>
+    <div class="p-5 flex flex-col items">
+        <span class="cursor-pointer text-blue-600" phx-click="home">back</span>
+        <h2 class="text-gray-800 text-l font-bold">Koppla checkpoint till meddelande</h2>
+        <div class="text-center"><%= @selected_message.from  %>: <%= @selected_message.message %></div>
+    </div>
+<% end %>
+</div>

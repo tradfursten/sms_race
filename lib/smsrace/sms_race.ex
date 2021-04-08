@@ -21,6 +21,12 @@ defmodule Smsrace.SMSRace do
     Repo.all(Race)
   end
 
+  def list_races_with_checkpoints do
+    Race
+    |> Repo.all()
+    |> Repo.preload(:checkpoints)
+  end
+
   @doc """
   Gets a single race.
 
@@ -133,6 +139,12 @@ defmodule Smsrace.SMSRace do
   """
   def get_participant!(id), do: Repo.get!(Participant, id)
 
+
+  def find_participant(n) do
+    query = from p in Participant, where: p.phonenumber == ^n, select: p
+    Repo.all(query)
+  end
+
   @doc """
   Creates a participant.
 
@@ -211,6 +223,11 @@ defmodule Smsrace.SMSRace do
   """
   def list_checkpoints do
     Repo.all(Checkpoint)
+  end
+
+  def find_checkpoint(code, race_id) do
+    query = from c in Checkpoint, where: c.code == ^code and c.race_id == ^race_id, select: c
+    Repo.all(query)
   end
 
   @doc """
@@ -405,6 +422,14 @@ defmodule Smsrace.SMSRace do
     Repo.all(Message)
   end
 
+  def list_messages_sorted do
+    Message
+    |> where(handled: false)
+    |> order_by(desc: :created)
+    |> Repo.all
+    |> Repo.preload([passage: [:checkpoint, :participant]])
+  end
+
   @doc """
   Gets a single message.
 
@@ -437,13 +462,6 @@ defmodule Smsrace.SMSRace do
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
-    |> case do
-      {:ok, message} ->
-        Phoenix.PubSub.broadcast!(Smsrace.PubSub, "messages", {:message_saved, message})
-        {:ok, message}
-      result -> result
-    end
-
   end
 
   @doc """

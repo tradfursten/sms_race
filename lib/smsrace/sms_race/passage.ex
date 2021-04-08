@@ -4,8 +4,9 @@ defmodule Smsrace.SMSRace.Passage do
 
   schema "passages" do
     field :at, :utc_datetime
-    field :checkpoint_id, :id
-    field :participant_id, :id
+    belongs_to :message, Smsrace.SMSRace.Message
+    belongs_to :participant, Smsrace.SMSRace.Participant
+    belongs_to :checkpoint, Smsrace.SMSRace.Checkpoint
 
     timestamps()
   end
@@ -13,7 +14,7 @@ defmodule Smsrace.SMSRace.Passage do
   @doc false
   def changeset(passage, attrs) do
     passage
-    |> cast(attrs, [:at])
+    |> cast(attrs, [:at, :participant_id, :checkpoint_id, :message_id])
     |> validate_required([:at])
   end
 end

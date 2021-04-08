@@ -5,14 +5,44 @@ defmodule SmsraceWeb.ExternalApiController do
 
 
   alias Smsrace.SMSRace
-  alias Smsrace.SMSRace.Messages
 
   def create(conn, %{"id" => id} = params) do
     Logger.debug "Var value: #{inspect(params)}"
+    new_message = params
+    |> Map.delete("id")
+    |> Map.put("api_id", id)
 
-    %{api_id: params.id, from: params.from}
-    conn
-    |> send_resp(200, "")
+    case SMSRace.create_message(new_message) do
+      {:ok, %{id: message_id, from: from, message: message, created: created}} ->
+        participant = SMSRace.find_participant(from)
+        checkpoint = find_checkpoint(message, participant)
+        with {:error, reason} <- create_passage(participant, checkpoint, created, message_id) do
+          Logger.error("Something went wrong when creating passage: #{inspect(reason)}")
+        end
+        conn
+        |> send_resp(200, "Message saved")
+      {:error, %Ecto.Changeset{} = _changeset} ->
+        conn
+        |> send_resp(500, "Could not save message")
+    end
+  end
+
+  defp find_checkpoint(_message, []), do: []
+
+  defp find_checkpoint(message, [%{race_id: race_id}]), do: SMSRace.find_checkpoint(message, race_id)
+
+  defp find_checkpoint(_message, _participant ), do: []
+
+  defp create_passage([], _checkpoint, _at, _id), do: {:error, "No participant"}
+
+  defp create_passage([%{id: participant_id}], [], at, message_id) do
+    %{participant_id: participant_id, at: at, message_id: message_id}
+    |> SMSRace.create_passage
+  end
+
+  defp create_passage([participant], [checkpoint], at, message_id) do
+    %{participant_id: participant.id, checkpoint_id: checkpoint.id, at: at, message_id: message_id}
+    |> SMSRace.create_passage
   end
 
 end

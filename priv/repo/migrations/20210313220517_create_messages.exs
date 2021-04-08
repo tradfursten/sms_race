@@ -10,6 +10,9 @@ defmodule Smsrace.Repo.Migrations.CreateMessages do
       add :direction, :string
       add :created, :utc_datetime
 
+      add :handled, :boolean, default: false
+
+
       timestamps()
     end
 

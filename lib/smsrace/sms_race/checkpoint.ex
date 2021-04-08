@@ -7,7 +7,8 @@ defmodule Smsrace.SMSRace.Checkpoint do
     field :cutoff, :utc_datetime
     field :distance, :float
     field :name, :string
-    field :race_id, :id
+    belongs_to :race, Smsrace.SMSRace.Race
+    has_many :passages, Smsrace.SMSRace.Passage
 
     timestamps()
   end
@@ -15,7 +16,7 @@ defmodule Smsrace.SMSRace.Checkpoint do
   @doc false
   def changeset(checkpoint, attrs) do
     checkpoint
-    |> cast(attrs, [:name, :distance, :cutoff, :code])
-    |> validate_required([:name, :distance, :cutoff, :code])
+    |> cast(attrs, [:name, :distance, :cutoff, :code, :race_id])
+    |> validate_required([:name, :distance, :code])
   end
 end
