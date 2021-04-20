@@ -1,39 +1,56 @@
 <section class="phx-hero">
     <h1 class="text-blue-400 text-5xl font-bold text-center">SMSRace</h1>
 </section>
-<div class="flex flex-col items-center">
 <%= if @selection == :messages do %>
-    <%= if @scope == :handled do %>
-        <div class="cursor-pointer text-blue-600">Visa alla</div>
+    <div class="flex justify-center">
+    <%= if @scope == :unhandled do %>
+        <div class="cursor-pointer text-blue-600 col-start-3 col-span-1" phx-click="show-all">Visa alla</div>
     <% else %>
-        <div class="cursor-pointer text-blue-600">Visa ej hanterade</div>
+        <div class="cursor-pointer text-blue-600" phx-click="show-unhandled">Visa ej hanterade</div>
     <% end %>
+    </div>
+    <div class="col-start-1 col-span-6 grid grid-cols-6 gap-4 p-5">
     <%= for message <- @messages do %>
-  <article class="sm:grid grid-cols-5 bg-white border-solid border-2 border-gray-200 shadow-sm p-7 relative lg:max-w-2xl sm:p-4 rounded-lg lg:col-span-2 lg:ml-20 m-5">
-  <div class="pt-5 self-center sm:pt-0 sm:pl-10 col-span-4">
-      <div class="col-span-5 flex justify-between">
-        <h2 class="text-gray-800 capitalize text-l font-bold"><%= message.from %></h2>
-        <h3 class="text-gray-800 capitalize text-m font-bold"><%= pretty_print_date(message.created) %></h3>
-      </div>
-      <span class="capitalize inline-block pt-2"><%= message.message %></span>
+    <div class="col-start-2 col-span-4 bg-white p-5 rounded">
+        <div class="flex justify-between">
+            <span><i class="fas fa-mobile-alt pr-2"></i>
+            <%= message.from %>
+            <%= if message.passage && message.passage.participant_id do %>
+                <%= live_redirect message.passage.participant.name, to: Routes.live_path(@socket, SmsraceWeb.ParticipantLive, message.passage.participant_id), class: "text-blue-500" %>
+            <% end %>
+            </span>
+            <span><%= pretty_print_date(message.created) %></span>
+        </div>
+        <div class="p-4">
+            <%= message.message %>
+            <%= if message.passage && message.passage.checkpoint_id do %>
+                <%= live_redirect message.passage.checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, message.passage.checkpoint_id), class: "text-blue-500" %>
+            <% end %>
+        </div>
+        <div class="flex justify-between">
         <%= if message.passage do %>
-            <div>
-            <%= if message.passage.participant do %>
-                <span><%= message.passage.participant.nr %>: <%= message.passage.participant.name %></span>
-            <% end %>
-            <%= if message.passage.checkpoint do %>
-                <span>@ <%= message.passage.checkpoint.name %></span>
-            <% else %>
-                <div class="cursor-pointer text-blue-600" phx-click="select-checkpoint" phx-value-message="<%= message.id %>">Koppla checkpoint</span></div>
-            <% end %>
-            </div>
-        <% else  %>
-            <div class="cursor-pointer text-blue-600" phx-click="select-participant" phx-value-message="<%= message.id %>">Koppla deltagare</span></div>
+            <span class="fa-stack p-2 cursor-pointer" phx-click="remove-participant" phx-value-message="<%= message.id %>">
+                <i class="fas fa-user fa-stack-1x"></i>
+                <i class="fas fa-ban fa-stack-2x" style="color:Tomato"></i>
+            </span>
+        <% else %>
+            <i class="fas fa-user-plus fa-2x p-2 cursor-pointer" phx-click="select-participant" phx-value-message="<%= message.id %>"></i>
         <% end %>
-        <div class="cursor-pointer text-blue-600">Markera som hanterad</div>
-  </div>
-</article>
+        <%= if message.passage do %>
+            <%= if message.passage.checkpoint_id do %>
+                <span class="fa-stack p-2 cursor-pointer" phx-click="remove-checkpoint" phx-value-message="<%= message.id %>">
+                    <i class="fas fa-map-marked-alt fa-stack-1x "></i>
+                    <i class="fas fa-ban fa-stack-2x" style="color:Tomato"></i>
+                </span>
+            <% else %>
+                <i class="fas fa-map-marked-alt fa-2x p-2 cursor-pointer" phx-click="select-checkpoint" phx-value-message="<%= message.id %>"></i>
+            <% end %>
+        <% end %>
+        <i class="fas fa-trash-alt fa-2x p-2 cursor-pointer" phx-click="delete-message" phx-value-message="<%= message.id %>"></i>
+        </div>
+    </div>
     <% end %>
+    </div>
 <% end %>
 
 <%= if @selection == :participants do %>
@@ -42,7 +59,9 @@
         <h2 class="text-gray-800 text-l font-bold">Koppla deltagare till meddelande</h2>
         <div class="text-center"><%= @selected_message.from  %>: <%= @selected_message.message %></div>
         <%= for participant <- sort_participants(@participants, @selected_message.from) do %>
-            <span phx-click="assign-participant-to-message" phx-value-participant="<%= participant.id %>" class="border-solid border-2 border-gray-200 p-3 shadow-sm rounded-lg"><%= participant.nr %>. <%= participant.name %> (<%= participant.phonenumber %>)</span>
+            <span phx-click="assign-participant-to-message" phx-value-participant="<%= participant.id %>" class="bg-white border-solid border-2 border-gray-200 p-3 shadow-sm rounded-lg">
+            <%= participant.nr %>. <%= participant.name %> (<%= participant.phonenumber %>)
+            </span>
         <% end %>
     </div>
 <% end %>
@@ -51,7 +70,12 @@
     <div class="p-5 flex flex-col items">
         <span class="cursor-pointer text-blue-600" phx-click="home">back</span>
         <h2 class="text-gray-800 text-l font-bold">Koppla checkpoint till meddelande</h2>
+        <div class="text-center"><%= @selected_race.name  %>: <%= @selected_participant.name %> (<%= @selected_participant.phonenumber %></div>
         <div class="text-center"><%= @selected_message.from  %>: <%= @selected_message.message %></div>
+        <%= for checkpoint <- @selected_race.checkpoints do %>
+            <span phx-click="assign-checkpoint-to-message" phx-value-checkpoint="<%= checkpoint.id %>" class="bg-white border-solid border-2 border-gray-200 p-3 shadow-sm rounded-lg">
+            <%= checkpoint.name %>
+            </span>
+        <% end %>
     </div>
 <% end %>
-</div>

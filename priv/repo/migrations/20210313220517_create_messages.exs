@@ -9,6 +9,7 @@ defmodule Smsrace.Repo.Migrations.CreateMessages do
       add :message, :string
       add :direction, :string
       add :created, :utc_datetime
+      add :deleted, :utc_datetime, default: nil
 
       add :handled, :boolean, default: false
 

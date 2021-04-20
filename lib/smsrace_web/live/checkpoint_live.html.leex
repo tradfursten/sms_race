@@ -1,0 +1,12 @@
+<h1><%= @checkpoint.name %> - <%= @race.name %></h1>
+
+<table>
+  <%= for {passage, i} <- Enum.with_index(@passages) do %>
+    <tr>
+      <td><%= i + 1 %></td>
+      <td><%= passage.participant.name %></td>
+      <td><%= passage.duration %></td>
+      <td><%= passage.behind %></td>
+    </tr>
+  <% end %>
+</table>

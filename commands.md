@@ -7,20 +7,21 @@ Pattern matcha med string nycklar i external api controller
 ToDo:
 x Enter messages into db in externalApiController
 Style message list
-Tie messages in live view to specific user? Skip in mvp
-Match message checkpoint and participant and create passage automaticly
-Enable creation of passage in message list
-Secure messages live view and all crud pages
-Create result list live view for a race and a checkpoint (public)
+x Tie messages in live view to specific user? Skip in mvp
+x Match message checkpoint and participant and create passage automaticly
+x Enable creation of passage in message list
+x Secure messages live view and all crud pages
+x Create result list live view for a race and a checkpoint (public)
 Deploy to gigalexir - extended
 
 ToDo:
-Vy för att välja participant
-Spara val av participant
-Vy för att väja checkpoint
-Spara val av checkpoint
+x Vy för att välja participant
+x Spara val av participant
+x Vy för att väja checkpoint
+x Spara val av checkpoint
 Sorerings val för messages
-Filtrera messages, handled, skriva text
+x Filtrera messages, handled
+Filtrering skriva text
 Klickbara länkar i message from
 Länka till en vy för en person
 Länka till en vy för en checkpoint

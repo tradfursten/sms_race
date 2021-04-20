@@ -26,7 +26,17 @@ defmodule SmsraceWeb.Router do
   scope "/", SmsraceWeb do
     pipe_through :browser
 
+
+    live "/results/checkpoints/:id", CheckpointLive
+    live "/results/participants/:id", ParticipantLive
+  end
+
+  scope "/", SmsraceWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
     resources "/races", RaceController
+    resources "/participants", ParticipantController
+    resources "/checkpoints", CheckpointController
 
     live "/", PageLive, :index
   end

@@ -10,6 +10,7 @@ defmodule Smsrace.SMSRace.Message do
     field :message, :string
     field :to, :string
     field :handled, :boolean
+    field :deleted, :utc_datetime
 
     has_one :passage, Smsrace.SMSRace.Passage
 
@@ -19,7 +20,7 @@ defmodule Smsrace.SMSRace.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:api_id, :from, :to, :message, :direction, :created])
+    |> cast(attrs, [:api_id, :from, :to, :message, :direction, :created, :handled, :deleted])
     |> validate_required([:api_id, :from, :to, :message, :direction, :created])
   end
 end

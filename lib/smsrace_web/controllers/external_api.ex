@@ -13,11 +13,18 @@ defmodule SmsraceWeb.ExternalApiController do
     |> Map.put("api_id", id)
 
     case SMSRace.create_message(new_message) do
-      {:ok, %{id: message_id, from: from, message: message, created: created}} ->
+      {:ok, %{id: message_id, from: from, message: message, created: created} = persisted_message} ->
         participant = SMSRace.find_participant(from)
         checkpoint = find_checkpoint(message, participant)
-        with {:error, reason} <- create_passage(participant, checkpoint, created, message_id) do
-          Logger.error("Something went wrong when creating passage: #{inspect(reason)}")
+        case create_passage(participant, checkpoint, created, message_id) do
+          {:ok, %{participant_id: _participant_id, checkpoint_id: nil}} ->
+            persisted_message
+            |> SMSRace.update_message(%{handled: false})
+          {:ok, %{participant_id: _participant_id, checkpoint_id: _checkpoint_id}} ->
+            persisted_message
+            |> SMSRace.update_message(%{handled: true})
+          {:error, reason} ->
+            Logger.error("Something went wrong when creating passage: #{inspect(reason)}")
         end
         conn
         |> send_resp(200, "Message saved")

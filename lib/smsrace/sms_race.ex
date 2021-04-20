@@ -139,6 +139,13 @@ defmodule Smsrace.SMSRace do
   """
   def get_participant!(id), do: Repo.get!(Participant, id)
 
+  def get_participant_with_passages!(id) do
+    Participant
+    |> Repo.get!(id)
+    |> Repo.preload([passages: [:checkpoint]])
+
+  end
+
 
   def find_participant(n) do
     query = from p in Participant, where: p.phonenumber == ^n, select: p
@@ -226,6 +233,7 @@ defmodule Smsrace.SMSRace do
   end
 
   def find_checkpoint(code, race_id) do
+    # todo match ignore case
     query = from c in Checkpoint, where: c.code == ^code and c.race_id == ^race_id, select: c
     Repo.all(query)
   end
@@ -326,6 +334,14 @@ defmodule Smsrace.SMSRace do
     Repo.all(Passage)
   end
 
+  def list_passages_by_checkpoint_id(checkpoint_id) do
+    Passage
+    |> where(checkpoint_id: ^checkpoint_id)
+    |> order_by(asc: :at)
+    |> Repo.all
+    |> Repo.preload(:participant)
+  end
+
   @doc """
   Gets a single passage.
 
@@ -341,6 +357,11 @@ defmodule Smsrace.SMSRace do
 
   """
   def get_passage!(id), do: Repo.get!(Passage, id)
+
+  def get_passage_by_message_id!(message_id) do
+    query = from p in Passage, where: p.message_id == ^message_id, select: p
+    Repo.one!(query)
+  end
 
   @doc """
   Creates a passage.
@@ -425,6 +446,15 @@ defmodule Smsrace.SMSRace do
   def list_messages_sorted do
     Message
     |> where(handled: false)
+    |> where([m], is_nil(m.deleted))
+    |> order_by(desc: :created)
+    |> Repo.all
+    |> Repo.preload([passage: [:checkpoint, :participant]])
+  end
+
+  def list_messages_sorted(:all) do
+    Message
+    |> where([m], is_nil(m.deleted))
     |> order_by(desc: :created)
     |> Repo.all
     |> Repo.preload([passage: [:checkpoint, :participant]])
@@ -445,6 +475,12 @@ defmodule Smsrace.SMSRace do
 
   """
   def get_message!(id), do: Repo.get!(Message, id)
+
+  def get_message_with_passage!(id) do
+    Message
+    |> Repo.get!(id)
+    |> Repo.preload([passage: [:checkpoint, :participant]])
+  end
 
   @doc """
   Creates a message.
