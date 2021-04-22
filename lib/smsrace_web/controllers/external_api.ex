@@ -27,7 +27,7 @@ defmodule SmsraceWeb.ExternalApiController do
             Logger.error("Something went wrong when creating passage: #{inspect(reason)}")
         end
         conn
-        |> send_resp(200, "Message saved")
+        |> send_resp(200, "")
       {:error, %Ecto.Changeset{} = _changeset} ->
         conn
         |> send_resp(500, "Could not save message")
