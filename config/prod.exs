@@ -10,16 +10,13 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :smsrace, SmsraceWeb.Endpoint,
-  url: [host: "https://sms-race.gigalixirapp.com/", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
-
-config :sms_race, SmsraceWeb.Endpoint,
   http: [port: {:system, "PORT"}], # Possibly not needed, but doesn't hurt
   url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
   server: true
+  cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :sms_race, Smsrace.Repo,
+config :smsrace, Smsrace.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
   ssl: true,
