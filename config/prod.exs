@@ -15,7 +15,7 @@ config :smsrace, SmsraceWeb.Endpoint,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
   server: true,
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: [System.get_env("APP_NAME") <> ".gigalixirapp.com"]
+  check_origin: ["//" <> System.get_env("APP_NAME") <> ".gigalixirapp.com"]
 
 
 config :smsrace, Smsrace.Repo,
