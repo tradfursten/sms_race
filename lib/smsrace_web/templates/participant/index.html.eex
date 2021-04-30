@@ -1,30 +1,44 @@
-<h1>Listing Participants</h1>
+<h1 class="text-xl p-4">Listing Participants</h1>
 
-<table>
-  <thead>
+<table class="table-auto divide-y divided-gray-200">
+  <thead class="bg-gray-50">
     <tr>
-      <th>Nr</th>
-      <th>Name</th>
-      <th>Phonenumber</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nr</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phonenumber</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Race</th>
 
       <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="bg-white divide-y divide-gray-200">
 <%= for participant <- @participants do %>
     <tr>
-      <td><%= participant.nr %></td>
-      <td><%= participant.name %></td>
-      <td><%= participant.phonenumber %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= participant.nr %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= link participant.name, to: Routes.live_path(@conn, SmsraceWeb.ParticipantLive, participant.id), class: "text-blue-400 underline" %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= participant.phonenumber %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= link participant.race.name, to: Routes.live_path(@conn, SmsraceWeb.RaceLive, participant.race.id), class: "text-blue-400 underline" %></td>
 
-      <td>
-        <span><%= link "Show", to: Routes.participant_path(@conn, :show, participant) %></span>
-        <span><%= link "Edit", to: Routes.participant_path(@conn, :edit, participant) %></span>
-        <span><%= link "Delete", to: Routes.participant_path(@conn, :delete, participant), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span>
+          <%= link to: Routes.participant_path(@conn, :show, participant), class: "p-2" do%>
+            <i class="fas fa-mobile-alt pr-2"></i>
+          <% end %>
+        </span>
+        <span>
+        <%= link to: Routes.participant_path(@conn, :edit, participant), class: "p-2" do %>
+          <i class="fas fa-edit"></i>
+        <% end %>
+        </span>
+        <span>
+          <%= link to: Routes.participant_path(@conn, :delete, participant), method: :delete, data: [confirm: "Are you sure?"], class: "p-2" do %>
+            <i class="fas fa-trash-alt"></i>
+          <% end %>
+        </span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Participant", to: Routes.participant_path(@conn, :new) %></span>
+<span class="p-4"><%= link "New Participant", to: Routes.participant_path(@conn, :new), class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %></span>

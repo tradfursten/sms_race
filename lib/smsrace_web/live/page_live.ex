@@ -150,4 +150,11 @@ defmodule SmsraceWeb.PageLive do
     participants
     |> Enum.sort(&(String.jaro_distance(&1.phonenumber, from) >= String.jaro_distance(&2.phonenumber, from)))
   end
+
+  defp link_message(message) do
+    message
+    |> Phoenix.HTML.html_escape
+    |> Phoenix.HTML.safe_to_string
+    |> AutoLinker.link(new_window: true, rel: false, scheme: true, class: "text-blue-400 underline pointer")
+  end
 end

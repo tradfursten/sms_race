@@ -5,7 +5,7 @@ defmodule SmsraceWeb.CheckpointController do
   alias Smsrace.SMSRace.Checkpoint
 
   def index(conn, _params) do
-    checkpoints = SMSRace.list_checkpoints()
+    checkpoints = SMSRace.list_checkpoints_with_race()
     render(conn, "index.html", checkpoints: checkpoints)
   end
 

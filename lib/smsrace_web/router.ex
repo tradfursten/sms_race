@@ -27,6 +27,7 @@ defmodule SmsraceWeb.Router do
     pipe_through :browser
 
 
+    live "/results/races/:id", RaceLive
     live "/results/checkpoints/:id", CheckpointLive
     live "/results/participants/:id", ParticipantLive
   end

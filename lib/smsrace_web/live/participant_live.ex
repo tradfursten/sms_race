@@ -4,8 +4,8 @@ defmodule SmsraceWeb.ParticipantLive do
   def mount(%{"id" => participant_id}, _session, socket) do
 
     participant = Smsrace.SMSRace.get_participant_with_passages!(participant_id)
-
-    {:ok, assign(socket, participant: participant)}
+    race = Smsrace.SMSRace.get_race!(participant.race_id)
+    {:ok, assign(socket, participant: participant, race: race)}
 
   end
 

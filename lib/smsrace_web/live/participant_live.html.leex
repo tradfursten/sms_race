@@ -1,1 +1,4 @@
-<h1><%= @participant.name %></h1>
+<h1 class="text-2xl p-4"><%= @participant.name %> - <%= live_redirect @race.name, to: Routes.live_path(@socket, SmsraceWeb.RaceLive, @race.id), class: "text-blue-400 underline" %></h1>
+
+<span>Lista över checkpoints</span>
+<span>Möjlighet att redigera passager om man äger loppet</span>

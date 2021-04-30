@@ -7,6 +7,7 @@ defmodule Smsrace.SMSRace.Race do
     field :start, :utc_datetime
     belongs_to :user, Smsrace.Accounts.User
     has_many :checkpoints, Smsrace.SMSRace.Checkpoint
+    has_many :participants, Smsrace.SMSRace.Participant
 
     timestamps()
   end

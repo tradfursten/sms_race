@@ -1,4 +1,4 @@
-<h1>New Race</h1>
+<h1 class="text-xl p-4">New Race</h1>
 
 <%= render "form.html", Map.put(assigns, :action, Routes.race_path(@conn, :create)) %>
 

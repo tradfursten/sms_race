@@ -1,19 +1,19 @@
-<%= form_for @changeset, @action, fn f -> %>
+<%= form_for @changeset, @action, [ class: "flex flex-col"], fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <%= label f, :name, class: "rounded-lg" %>
-  <%= text_input f, :name %>
+  <%= label f, :name, class: "p-2" %>
+  <%= text_input f, :name, class: "p-2" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :start %>
-  <%= datetime_local_input f, :start %>
+  <%= label f, :start, class: "p-2" %>
+  <%= datetime_local_input f, :start, class: "p-2" %>
   <%= error_tag f, :start %>
 
-  <div>
-    <%= submit "Save" %>
+  <div class="p-4 self-center">
+    <%= submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 <% end %>

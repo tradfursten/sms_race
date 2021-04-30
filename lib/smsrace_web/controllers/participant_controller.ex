@@ -5,7 +5,7 @@ defmodule SmsraceWeb.ParticipantController do
   alias Smsrace.SMSRace.Participant
 
   def index(conn, _params) do
-    participants = SMSRace.list_participants()
+    participants = SMSRace.list_participants_with_race()
     render(conn, "index.html", participants: participants)
   end
 

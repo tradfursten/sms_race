@@ -1,32 +1,46 @@
-<h1>Listing Checkpoints</h1>
+<h1 class="text-xl p-4">Listing Checkpoints</h1>
 
-<table>
-  <thead>
+<table class="table-auto divide-y divided-gray-200">
+  <thead class="bg-gray-50">
     <tr>
-      <th>Name</th>
-      <th>Distance</th>
-      <th>Cutoff</th>
-      <th>Code</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cutoff</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Race</th>
 
       <th></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="bg-white divide-y divide-gray-200">
 <%= for checkpoint <- @checkpoints do %>
     <tr>
-      <td><%= checkpoint.name %></td>
-      <td><%= checkpoint.distance %></td>
-      <td><%= checkpoint.cutoff %></td>
-      <td><%= checkpoint.code %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= link checkpoint.name, to: Routes.live_path(@conn, SmsraceWeb.CheckpointLive, checkpoint.id), class: "text-blue-400 underline" %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= checkpoint.distance %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= checkpoint.cutoff %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= checkpoint.code %></td>
+      <td class="px-6 py-4 whitespace-nowrap"><%= link checkpoint.race.name, to: Routes.live_path(@conn, SmsraceWeb.RaceLive, checkpoint.race.id), class: "text-blue-400 underline" %></td>
 
-      <td>
-        <span><%= link "Show", to: Routes.checkpoint_path(@conn, :show, checkpoint) %></span>
-        <span><%= link "Edit", to: Routes.checkpoint_path(@conn, :edit, checkpoint) %></span>
-        <span><%= link "Delete", to: Routes.checkpoint_path(@conn, :delete, checkpoint), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span>
+          <%= link to: Routes.checkpoint_path(@conn, :show, checkpoint), class: "p-2" do%>
+            <i class="fas fa-mobile-alt pr-2"></i>
+          <% end %>
+        </span>
+        <span>
+        <%= link to: Routes.checkpoint_path(@conn, :edit, checkpoint), class: "p-2" do %>
+          <i class="fas fa-edit"></i>
+        <% end %>
+        </span>
+        <span>
+          <%= link to: Routes.checkpoint_path(@conn, :delete, checkpoint), method: :delete, data: [confirm: "Are you sure?"], class: "p-2" do %>
+            <i class="fas fa-trash-alt"></i>
+          <% end %>
+        </span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
 
-<span><%= link "New Checkpoint", to: Routes.checkpoint_path(@conn, :new) %></span>
+<span class="p-4"><%= link "New Checkpoint", to: Routes.checkpoint_path(@conn, :new), class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %></span>

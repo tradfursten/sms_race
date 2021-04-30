@@ -43,6 +43,12 @@ defmodule Smsrace.SMSRace do
   """
   def get_race!(id), do: Repo.get!(Race, id)
 
+  def get_race_with_participants!(id) do
+    Race
+    |> Repo.get!(id)
+    |> Repo.preload(:participants)
+  end
+
   @doc """
   Creates a race.
 
@@ -121,6 +127,12 @@ defmodule Smsrace.SMSRace do
   """
   def list_participants do
     Repo.all(Participant)
+  end
+
+  def list_participants_with_race do
+    Participant
+    |> Repo.all
+    |> Repo.preload(:race)
   end
 
   @doc """
@@ -232,6 +244,12 @@ defmodule Smsrace.SMSRace do
     Repo.all(Checkpoint)
   end
 
+  def list_checkpoints_with_race do
+    Checkpoint
+    |> Repo.all
+    |> Repo.preload(:race)
+  end
+
   def find_checkpoint(code, race_id) do
     # todo match ignore case
     query = from c in Checkpoint, where: c.code == ^code and c.race_id == ^race_id, select: c
@@ -332,6 +350,12 @@ defmodule Smsrace.SMSRace do
   """
   def list_passages do
     Repo.all(Passage)
+  end
+
+  def list_passages_with_race do
+    Passage
+    |> Repo.all
+    |> Repo.preload(:race)
   end
 
   def list_passages_by_checkpoint_id(checkpoint_id) do

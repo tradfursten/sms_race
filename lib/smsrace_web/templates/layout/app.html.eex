@@ -1,4 +1,4 @@
-<main role="main" class="container">
+<main role="main" class="p-5 bg-gray-200 h-screen flex flex-col items-center">
   <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
   <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
   <%= @inner_content %>

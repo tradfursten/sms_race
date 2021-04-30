@@ -5,7 +5,7 @@ defmodule SmsraceWeb.PassageController do
   alias Smsrace.SMSRace.Passage
 
   def index(conn, _params) do
-    passages = SMSRace.list_passages()
+    passages = SMSRace.list_passages_with_race()
     render(conn, "index.html", passages: passages)
   end
 
