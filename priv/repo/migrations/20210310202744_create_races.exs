@@ -6,6 +6,7 @@ defmodule Smsrace.Repo.Migrations.CreateRaces do
       add :name, :string
       add :start, :utc_datetime
       add :user_id, references(:users, on_delete: :nothing)
+      add :type, :string
 
       timestamps()
     end

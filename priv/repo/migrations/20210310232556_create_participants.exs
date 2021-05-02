@@ -7,10 +7,13 @@ defmodule Smsrace.Repo.Migrations.CreateParticipants do
       add :name, :string
       add :phonenumber, :string
       add :race_id, references(:races, on_delete: :nothing)
+      add :status, :string
 
       timestamps()
     end
 
     create index(:participants, [:race_id])
+
+    create index(:participants, [:phonenumber])
   end
 end

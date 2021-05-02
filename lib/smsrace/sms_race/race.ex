@@ -5,6 +5,7 @@ defmodule Smsrace.SMSRace.Race do
   schema "races" do
     field :name, :string
     field :start, :utc_datetime
+    field :type, :string
     belongs_to :user, Smsrace.Accounts.User
     has_many :checkpoints, Smsrace.SMSRace.Checkpoint
     has_many :participants, Smsrace.SMSRace.Participant
@@ -15,7 +16,7 @@ defmodule Smsrace.SMSRace.Race do
   @doc false
   def changeset(race, attrs) do
     race
-    |> cast(attrs, [:name, :start])
-    |> validate_required([:name, :start])
+    |> cast(attrs, [:name, :start, :type])
+    |> validate_required([:name, :start, :type])
   end
 end

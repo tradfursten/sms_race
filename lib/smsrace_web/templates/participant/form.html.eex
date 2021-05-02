@@ -1,23 +1,31 @@
-<%= form_for @changeset, @action, fn f -> %>
+<%= form_for @changeset, @action, [ class: "flex flex-col"], fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
-  <%= label f, :nr %>
-  <%= number_input f, :nr %>
+  <%= label f, :nr, class: "p-2"  %>
+  <%= number_input f, :nr, class: "p-2"  %>
   <%= error_tag f, :nr %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= label f, :name, class: "p-2"  %>
+  <%= text_input f, :name, class: "p-2"  %>
   <%= error_tag f, :name %>
 
-  <%= label f, :phonenumber %>
-  <%= text_input f, :phonenumber %>
+  <%= label f, :phonenumber, class: "p-2"  %>
+  <%= text_input f, :phonenumber, class: "p-2"  %>
   <%= error_tag f, :phonenumber %>
 
-  <div>
-    <%= submit "Save" %>
+  <%= label f, :status, class: "p-2" %>
+  <%= select f, :status, ["-", "Started", "Finished", "DNS", "DNF"], class: "p-2" %>
+  <%= error_tag f, :status %>
+
+  <%= label f, :race_id, class: "p-2" %>
+  <%= select f, :race_id, @races, class: "p-2" %>
+  <%= error_tag f, :race_id %>
+
+  <div class="p-4 self-center">
+    <%= submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 <% end %>

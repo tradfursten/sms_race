@@ -13,11 +13,6 @@
   </li>
 
   <li>
-    <strong>Cutoff:</strong>
-    <%= @checkpoint.cutoff %>
-  </li>
-
-  <li>
     <strong>Code:</strong>
     <%= @checkpoint.code %>
   </li>

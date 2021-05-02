@@ -4,9 +4,10 @@ defmodule Smsrace.SMSRace.Checkpoint do
 
   schema "checkpoints" do
     field :code, :string
-    field :cutoff, :utc_datetime
     field :distance, :float
     field :name, :string
+    field :type, :string
+    field :info, :string
     belongs_to :race, Smsrace.SMSRace.Race
     has_many :passages, Smsrace.SMSRace.Passage
 
@@ -16,7 +17,7 @@ defmodule Smsrace.SMSRace.Checkpoint do
   @doc false
   def changeset(checkpoint, attrs) do
     checkpoint
-    |> cast(attrs, [:name, :distance, :cutoff, :code, :race_id])
-    |> validate_required([:name, :distance, :code])
+    |> cast(attrs, [:name, :distance, :code, :race_id, :type, :info])
+    |> validate_required([:name, :type])
   end
 end

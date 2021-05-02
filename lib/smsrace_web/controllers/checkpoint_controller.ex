@@ -11,7 +11,9 @@ defmodule SmsraceWeb.CheckpointController do
 
   def new(conn, _params) do
     changeset = SMSRace.change_checkpoint(%Checkpoint{})
-    render(conn, "new.html", changeset: changeset)
+    races = SMSRace.list_races()
+    |> Enum.map(&{&1.name, &1.id})
+    render(conn, "new.html", changeset: changeset, races: races)
   end
 
   def create(conn, %{"checkpoint" => checkpoint_params}) do
@@ -22,7 +24,9 @@ defmodule SmsraceWeb.CheckpointController do
         |> redirect(to: Routes.checkpoint_path(conn, :show, checkpoint))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        races = SMSRace.list_races()
+        |> Enum.map(&{&1.name, &1.id})
+        render(conn, "new.html", changeset: changeset, races: races)
     end
   end
 
@@ -34,7 +38,9 @@ defmodule SmsraceWeb.CheckpointController do
   def edit(conn, %{"id" => id}) do
     checkpoint = SMSRace.get_checkpoint!(id)
     changeset = SMSRace.change_checkpoint(checkpoint)
-    render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset)
+    races = SMSRace.list_races()
+    |> Enum.map(&{&1.name, &1.id})
+    render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset, races: races)
   end
 
   def update(conn, %{"id" => id, "checkpoint" => checkpoint_params}) do
@@ -47,7 +53,9 @@ defmodule SmsraceWeb.CheckpointController do
         |> redirect(to: Routes.checkpoint_path(conn, :show, checkpoint))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset)
+        races = SMSRace.list_races()
+        |> Enum.map(&{&1.name, &1.id})
+        render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset, races: races)
     end
   end
 

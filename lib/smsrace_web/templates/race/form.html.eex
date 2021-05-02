@@ -13,6 +13,11 @@
   <%= datetime_local_input f, :start, class: "p-2" %>
   <%= error_tag f, :start %>
 
+
+  <%= label f, :type, class: "p-2" %>
+  <%= select f, :type, ["mass start", "variable start"], class: "p-2" %>
+  <%= error_tag f, :type %>
+
   <div class="p-4 self-center">
     <%= submit "Save", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   </div>

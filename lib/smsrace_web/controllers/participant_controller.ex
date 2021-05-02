@@ -11,7 +11,9 @@ defmodule SmsraceWeb.ParticipantController do
 
   def new(conn, _params) do
     changeset = SMSRace.change_participant(%Participant{})
-    render(conn, "new.html", changeset: changeset)
+    races = SMSRace.list_races()
+    |> Enum.map(&{&1.name, &1.id})
+    render(conn, "new.html", changeset: changeset, races: races)
   end
 
   def create(conn, %{"participant" => participant_params}) do
@@ -22,7 +24,9 @@ defmodule SmsraceWeb.ParticipantController do
         |> redirect(to: Routes.participant_path(conn, :show, participant))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        races = SMSRace.list_races()
+        |> Enum.map(&{&1.name, &1.id})
+        render(conn, "new.html", changeset: changeset, races: races)
     end
   end
 
@@ -33,8 +37,10 @@ defmodule SmsraceWeb.ParticipantController do
 
   def edit(conn, %{"id" => id}) do
     participant = SMSRace.get_participant!(id)
+    races = SMSRace.list_races()
+    |> Enum.map(&{&1.name, &1.id})
     changeset = SMSRace.change_participant(participant)
-    render(conn, "edit.html", participant: participant, changeset: changeset)
+    render(conn, "edit.html", participant: participant, changeset: changeset, races: races)
   end
 
   def update(conn, %{"id" => id, "participant" => participant_params}) do
@@ -47,7 +53,9 @@ defmodule SmsraceWeb.ParticipantController do
         |> redirect(to: Routes.participant_path(conn, :show, participant))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", participant: participant, changeset: changeset)
+        races = SMSRace.list_races()
+        |> Enum.map(&{&1.name, &1.id})
+        render(conn, "edit.html", participant: participant, changeset: changeset, races: races)
     end
   end
 
