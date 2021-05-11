@@ -6,11 +6,16 @@ defmodule SmsraceWeb.RaceController do
 
   def index(conn, _params) do
     races = SMSRace.list_races()
+
     render(conn, "index.html", races: races)
   end
 
   def new(conn, _params) do
     changeset = SMSRace.change_race(%Race{})
+    |> Ecto.Changeset.put_change(:timezone, "Europe/Stockholm" )
+    |> Ecto.Changeset.put_change(:display_time, DateTime.now!("Europe/Stockholm") |> DateTime.to_naive)
+
+    IO.inspect(changeset)
     render(conn, "new.html", changeset: changeset)
   end
 
@@ -28,12 +33,16 @@ defmodule SmsraceWeb.RaceController do
 
   def show(conn, %{"id" => id}) do
     race = SMSRace.get_race!(id)
+    race = race |> Map.put(:display_time, race.start |> DateTime.shift_zone!(race.timezone) |> DateTime.to_naive)
     render(conn, "show.html", race: race)
   end
 
   def edit(conn, %{"id" => id}) do
     race = SMSRace.get_race!(id)
+
     changeset = SMSRace.change_race(race)
+    |> Ecto.Changeset.put_change(:display_time, race.start |> DateTime.shift_zone!(race.timezone) |> DateTime.to_naive)
+
     render(conn, "edit.html", race: race, changeset: changeset)
   end
 

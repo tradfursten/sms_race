@@ -9,10 +9,13 @@
   <%= text_input f, :name, class: "p-2" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :start, class: "p-2" %>
-  <%= datetime_local_input f, :start, class: "p-2" %>
-  <%= error_tag f, :start %>
+  <%= label f, :timezone, class: "p-2" %>
+  <%= text_input f, :timezone, class: "p-2" %>
+  <%= error_tag f, :timezone %>
 
+  <%= label f, :start, class: "p-2" %>
+  <%= datetime_local_input f, :display_time, class: "p-2" %>
+  <%= error_tag f, :start %>
 
   <%= label f, :type, class: "p-2" %>
   <%= select f, :type, ["mass start", "variable start"], class: "p-2" %>

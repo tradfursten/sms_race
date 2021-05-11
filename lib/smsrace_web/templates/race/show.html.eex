@@ -9,7 +9,7 @@
 
   <li>
     <strong>Start:</strong>
-    <%= @race.start %>
+    <%= @race.display_time %>
   </li>
 
 </ul>

@@ -23,3 +23,5 @@ config :smsrace, SmsraceWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase

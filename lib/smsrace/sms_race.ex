@@ -159,8 +159,9 @@ defmodule Smsrace.SMSRace do
   end
 
 
+  @spec find_participant(any) :: any
   def find_participant(n) do
-    query = from p in Participant, where: p.phonenumber == ^n, select: p
+    query = from p in Participant, where: p.phonenumber == ^n and p.status not in ["DNS", "DNF"], select: p
     Repo.all(query)
   end
 
