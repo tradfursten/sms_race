@@ -34,6 +34,10 @@ defmodule SmsraceWeb.ExternalApiController do
     end
   end
 
+  def incomming_call(conn, _params) do
+    json(conn, %{"connect" => "+46734348420"})
+  end
+
   defp find_checkpoint(_message, []), do: []
 
   defp find_checkpoint(message, [%{race_id: race_id}]), do: SMSRace.find_checkpoint(message, race_id)

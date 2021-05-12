@@ -46,6 +46,7 @@ defmodule SmsraceWeb.Router do
     pipe_through :external_api
 
     post "/incoming", ExternalApiController, :create
+    post "/incoming_call", ExternalApiController, :incomming_call
   end
 
   # Other scopes may use custom stacks.

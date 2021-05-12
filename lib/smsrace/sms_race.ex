@@ -253,6 +253,7 @@ defmodule Smsrace.SMSRace do
 
   def find_checkpoint(code, race_id) do
     # todo match ignore case
+    code = String.downcase(code)
     query = from c in Checkpoint, where: c.code == ^code and c.race_id == ^race_id, select: c
     Repo.all(query)
   end
