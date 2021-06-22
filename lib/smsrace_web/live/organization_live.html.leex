@@ -1,0 +1,16 @@
+<h1 class="p-2 text-2xl">Organization</h1>
+
+<%= if @section == :new_organization do %>
+  <h2 class="p-2 text-l">Create new organization or wait for and invite</h2>
+  <div>
+    <form phx-submit="create_organization" class="flex flex-col">
+      <label for="name" class="p-2">Name</label>
+      <input id="name" name="name" class="p-2"/>
+      <label for="incomming" class="p-2">Incomming number</label>
+      <input id="incomming" name="incomming" class="p-2"/>
+      <label for="emergency" class="p-2">Emergency number</label>
+      <input id="emergency" name="emergency" class="p-2"/>
+      <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4" >Create organization</button>
+    </form>
+  </div>
+<% end %>
