@@ -18,7 +18,7 @@
   <%= error_tag f, :phonenumber %>
 
   <%= label f, :status, class: "p-2" %>
-  <%= select f, :status, ["-", "Started", "Finished", "DNS", "DNF"], class: "p-2" %>
+  <%= select f, :status, ["-", "started", "finished", "DNS", "DNF"], class: "p-2" %>
   <%= error_tag f, :status %>
 
   <%= label f, :race_id, class: "p-2" %>

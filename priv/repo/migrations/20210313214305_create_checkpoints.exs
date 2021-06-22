@@ -4,6 +4,7 @@ defmodule Smsrace.Repo.Migrations.CreateCheckpoints do
   def change do
     create table(:checkpoints) do
       add :name, :string
+      add :number, :integer
       add :distance, :float
       add :code, :string
       add :race_id, references(:races, on_delete: :nothing)

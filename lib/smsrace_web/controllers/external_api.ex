@@ -14,7 +14,7 @@ defmodule SmsraceWeb.ExternalApiController do
 
     case SMSRace.create_message(new_message) do
       {:ok, %{id: message_id, from: from, message: message, created: created} = persisted_message} ->
-        participant = SMSRace.find_participant(from)
+        participant = Smsrace.Participant.find_participant(from)
         checkpoint = find_checkpoint(message, participant)
         case create_passage(participant, checkpoint, created, message_id) do
           {:ok, %{participant_id: _participant_id, checkpoint_id: nil}} ->
@@ -46,13 +46,13 @@ defmodule SmsraceWeb.ExternalApiController do
 
   defp create_passage([], _checkpoint, _at, _id), do: {:error, "No participant"}
 
-  defp create_passage([%{id: participant_id}], [], at, message_id) do
-    %{participant_id: participant_id, at: at, message_id: message_id}
+  defp create_passage([%{id: participant_id} = participant], [], at, message_id) do
+    %{participant_id: participant_id, at: at, message_id: message_id, participant: participant}
     |> SMSRace.create_passage
   end
 
   defp create_passage([participant], [checkpoint], at, message_id) do
-    %{participant_id: participant.id, checkpoint_id: checkpoint.id, at: at, message_id: message_id}
+    %{participant_id: participant.id, checkpoint_id: checkpoint.id, at: at, message_id: message_id, participant: participant, checkpoint: checkpoint}
     |> SMSRace.create_passage
   end
 

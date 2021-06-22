@@ -71,7 +71,7 @@
         <div class="text-center"><%= @selected_message.from  %>: <%= @selected_message.message %></div>
         <%= for checkpoint <- @selected_race.checkpoints do %>
             <span phx-click="assign-checkpoint-to-message" phx-value-checkpoint="<%= checkpoint.id %>" class="bg-white border-solid border-2 border-gray-200 p-3 shadow-sm rounded-lg">
-            <%= checkpoint.name %>
+                <%= checkpoint.number %>. <%= checkpoint.name %>
             </span>
         <% end %>
     </div>

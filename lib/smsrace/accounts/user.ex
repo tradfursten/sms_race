@@ -8,6 +8,7 @@ defmodule Smsrace.Accounts.User do
     field :password, :string, virtual: true
     field :hashed_password, :string
     field :confirmed_at, :naive_datetime
+    belongs_to :organization, Smsrace.Accounts.Organization
 
     timestamps()
   end

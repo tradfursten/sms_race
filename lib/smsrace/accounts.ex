@@ -5,7 +5,7 @@ defmodule Smsrace.Accounts do
 
   import Ecto.Query, warn: false
   alias Smsrace.Repo
-  alias Smsrace.Accounts.{User, UserToken, UserNotifier}
+  alias Smsrace.Accounts.{User, UserToken, UserNotifier, Organization}
 
   ## Database getters
 
@@ -345,5 +345,21 @@ defmodule Smsrace.Accounts do
       {:ok, %{user: user}} -> {:ok, user}
       {:error, :user, changeset, _} -> {:error, changeset}
     end
+  end
+
+  def create_organization(attrs \\ %{}) do
+    %Organization{}
+    |> Organization.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def add_user_to_organization(user_id, organization_id) do
+    get_user!(user_id)
+    |> Ecto.Changeset.cast(%{organization_id: organization_id}, [:organization_id])
+    |> Repo.update()
+  end
+
+  def get_organization(organization_id) do
+    Repo.get(Organization, organization_id)
   end
 end

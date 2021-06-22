@@ -17,14 +17,15 @@ defmodule Smsrace.SMSRace do
       [%Race{}, ...]
 
   """
-  def list_races do
-    Repo.all(Race)
+  def list_races(organization_id) do
+    Race
+    |> where([r], r.organization_id == ^organization_id)
+    |> Repo.all()
+    |> Enum.map(&Race.add_display_time/1)
   end
 
-  def list_races_with_checkpoints do
-    Race
-    |> Repo.all()
-    |> Repo.preload(:checkpoints)
+  def list_races_with_checkpoints(organization_id) do
+    Repo.preload(list_races(organization_id), :checkpoints)
   end
 
   @doc """
@@ -41,14 +42,33 @@ defmodule Smsrace.SMSRace do
       ** (Ecto.NoResultsError)
 
   """
-  def get_race!(id), do: Repo.get!(Race, id)
+  def get_race!(id, organization_id) do
+    Race
+    |> where([r], r.organization_id == ^organization_id)
+    |> Repo.get!(id)
+    |> Race.add_display_time()
+  end
 
-  def get_race_with_participants!(id) do
+  def get_race!(id) do
     Race
     |> Repo.get!(id)
+    |> Race.add_display_time()
+  end
+
+  def get_race_with_participants!(id, organization_id) do
+    get_race!(id, organization_id)
     |> Repo.preload(:participants)
   end
 
+  def get_race_with_participants!(id) do
+    get_race!(id)
+    |> Repo.preload(:participants)
+  end
+
+  def get_race_with_checkpoints!(id) do
+    get_race!(id)
+    |> Repo.preload(:checkpoints)
+  end
   @doc """
   Creates a race.
 
@@ -112,122 +132,6 @@ defmodule Smsrace.SMSRace do
   """
   def change_race(%Race{} = race, attrs \\ %{}) do
     Race.changeset(race, attrs)
-  end
-
-  alias Smsrace.SMSRace.Participant
-
-  @doc """
-  Returns the list of participants.
-
-  ## Examples
-
-      iex> list_participants()
-      [%Participant{}, ...]
-
-  """
-  def list_participants do
-    Repo.all(Participant)
-  end
-
-  def list_participants_with_race do
-    Participant
-    |> Repo.all
-    |> Repo.preload(:race)
-  end
-
-  @doc """
-  Gets a single participant.
-
-  Raises `Ecto.NoResultsError` if the Participant does not exist.
-
-  ## Examples
-
-      iex> get_participant!(123)
-      %Participant{}
-
-      iex> get_participant!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_participant!(id), do: Repo.get!(Participant, id)
-
-  def get_participant_with_passages!(id) do
-    Participant
-    |> Repo.get!(id)
-    |> Repo.preload([passages: [:checkpoint]])
-
-  end
-
-
-  @spec find_participant(any) :: any
-  def find_participant(n) do
-    query = from p in Participant, where: p.phonenumber == ^n and p.status not in ["DNS", "DNF"], select: p
-    Repo.all(query)
-  end
-
-  @doc """
-  Creates a participant.
-
-  ## Examples
-
-      iex> create_participant(%{field: value})
-      {:ok, %Participant{}}
-
-      iex> create_participant(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_participant(attrs \\ %{}) do
-    %Participant{}
-    |> Participant.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates a participant.
-
-  ## Examples
-
-      iex> update_participant(participant, %{field: new_value})
-      {:ok, %Participant{}}
-
-      iex> update_participant(participant, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_participant(%Participant{} = participant, attrs) do
-    participant
-    |> Participant.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a participant.
-
-  ## Examples
-
-      iex> delete_participant(participant)
-      {:ok, %Participant{}}
-
-      iex> delete_participant(participant)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_participant(%Participant{} = participant) do
-    Repo.delete(participant)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking participant changes.
-
-  ## Examples
-
-      iex> change_participant(participant)
-      %Ecto.Changeset{data: %Participant{}}
-
-  """
-  def change_participant(%Participant{} = participant, attrs \\ %{}) do
-    Participant.changeset(participant, attrs)
   end
 
   alias Smsrace.SMSRace.Checkpoint
@@ -402,9 +306,16 @@ defmodule Smsrace.SMSRace do
 
   """
   def create_passage(attrs \\ %{}) do
-    %Passage{}
+    passage = %Passage{}
     |> Passage.changeset(attrs)
     |> Repo.insert()
+
+    Smsrace.Participant.update_participant_status(attrs)
+    case passage do
+      {:ok, p} ->
+        Smsrace.TopicHelper.publish_passage(p)
+    end
+    passage
   end
 
   @doc """
@@ -423,6 +334,9 @@ defmodule Smsrace.SMSRace do
     passage
     |> Passage.changeset(attrs)
     |> Repo.update()
+
+    Smsrace.TopicHelper.publish_passage(passage)
+    passage
   end
 
   @doc """
@@ -439,6 +353,7 @@ defmodule Smsrace.SMSRace do
   """
   def delete_passage(%Passage{} = passage) do
     Repo.delete(passage)
+    Smsrace.TopicHelper.publish_passage(passage)
   end
 
   @doc """
@@ -469,18 +384,17 @@ defmodule Smsrace.SMSRace do
     Repo.all(Message)
   end
 
-  def list_messages_sorted do
+  def list_messages_sorted(number) do
     Message
-    |> where(handled: false)
-    |> where([m], is_nil(m.deleted))
+    |> where([m], m.handled == false and is_nil(m.deleted) and m.to == ^number)
     |> order_by(desc: :created)
     |> Repo.all
     |> Repo.preload([passage: [:checkpoint, :participant]])
   end
 
-  def list_messages_sorted(:all) do
+  def list_messages_sorted(number, :all) do
     Message
-    |> where([m], is_nil(m.deleted))
+    |> where([m], is_nil(m.deleted) and m.to == ^number)
     |> order_by(desc: :created)
     |> Repo.all
     |> Repo.preload([passage: [:checkpoint, :participant]])
@@ -521,9 +435,14 @@ defmodule Smsrace.SMSRace do
 
   """
   def create_message(attrs \\ %{}) do
-    %Message{}
+    message = %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
+    case message do
+      {:ok, m} ->
+        Smsrace.TopicHelper.publish_message(m)
+    end
+    message
   end
 
   @doc """
@@ -542,6 +461,9 @@ defmodule Smsrace.SMSRace do
     message
     |> Message.changeset(attrs)
     |> Repo.update()
+
+    Smsrace.TopicHelper.publish_message(message)
+    message
   end
 
   @doc """

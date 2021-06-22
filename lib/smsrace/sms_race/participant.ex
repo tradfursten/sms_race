@@ -17,7 +17,7 @@ defmodule Smsrace.SMSRace.Participant do
   def changeset(participant, attrs) do
     participant
     |> cast(attrs, [:nr, :name, :phonenumber, :race_id, :status])
-    |> validate_inclusion(:status, ["-", "Started", "Finished", "DNS", "DNF"])
+    |> validate_inclusion(:status, ["-", "started", "finished", "DNS", "DNF"])
     |> validate_required([:nr, :name, :phonenumber, :status])
   end
 end

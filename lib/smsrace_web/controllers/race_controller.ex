@@ -5,7 +5,8 @@ defmodule SmsraceWeb.RaceController do
   alias Smsrace.SMSRace.Race
 
   def index(conn, _params) do
-    races = SMSRace.list_races()
+    user = conn.assigns.current_user
+    races = SMSRace.list_races(user.organization_id)
 
     render(conn, "index.html", races: races)
   end
@@ -20,6 +21,8 @@ defmodule SmsraceWeb.RaceController do
   end
 
   def create(conn, %{"race" => race_params}) do
+    user = conn.assigns.current_user
+    race_params = Map.put(race_params, "organization_id", user.organization_id)
     case SMSRace.create_race(race_params) do
       {:ok, race} ->
         conn
@@ -32,13 +35,15 @@ defmodule SmsraceWeb.RaceController do
   end
 
   def show(conn, %{"id" => id}) do
-    race = SMSRace.get_race!(id)
+    user = conn.assigns.current_user
+    race = SMSRace.get_race!(id, user.organization_id)
     race = race |> Map.put(:display_time, race.start |> DateTime.shift_zone!(race.timezone) |> DateTime.to_naive)
     render(conn, "show.html", race: race)
   end
 
   def edit(conn, %{"id" => id}) do
-    race = SMSRace.get_race!(id)
+    user = conn.assigns.current_user
+    race = SMSRace.get_race!(id, user.organization_id)
 
     changeset = SMSRace.change_race(race)
     |> Ecto.Changeset.put_change(:display_time, race.start |> DateTime.shift_zone!(race.timezone) |> DateTime.to_naive)
@@ -47,8 +52,10 @@ defmodule SmsraceWeb.RaceController do
   end
 
   def update(conn, %{"id" => id, "race" => race_params}) do
-    race = SMSRace.get_race!(id)
+    user = conn.assigns.current_user
+    race = SMSRace.get_race!(id, user.organization_id)
 
+    race_params = Map.put(race_params, "organization_id", user.organization_id)
     case SMSRace.update_race(race, race_params) do
       {:ok, race} ->
         conn
@@ -61,7 +68,8 @@ defmodule SmsraceWeb.RaceController do
   end
 
   def delete(conn, %{"id" => id}) do
-    race = SMSRace.get_race!(id)
+    user = conn.assigns.current_user
+    race = SMSRace.get_race!(id, user.organization_id)
     {:ok, _race} = SMSRace.delete_race(race)
 
     conn

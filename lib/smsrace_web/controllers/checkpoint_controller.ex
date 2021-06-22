@@ -5,18 +5,21 @@ defmodule SmsraceWeb.CheckpointController do
   alias Smsrace.SMSRace.Checkpoint
 
   def index(conn, _params) do
+    user = conn.assigns.current_user
     checkpoints = SMSRace.list_checkpoints_with_race()
     render(conn, "index.html", checkpoints: checkpoints)
   end
 
   def new(conn, _params) do
+    user = conn.assigns.current_user
     changeset = SMSRace.change_checkpoint(%Checkpoint{})
-    races = SMSRace.list_races()
+    races = SMSRace.list_races(user.organization_id)
     |> Enum.map(&{&1.name, &1.id})
     render(conn, "new.html", changeset: changeset, races: races)
   end
 
   def create(conn, %{"checkpoint" => checkpoint_params}) do
+    user = conn.assigns.current_user
     case SMSRace.create_checkpoint(checkpoint_params) do
       {:ok, checkpoint} ->
         conn
@@ -24,7 +27,7 @@ defmodule SmsraceWeb.CheckpointController do
         |> redirect(to: Routes.checkpoint_path(conn, :show, checkpoint))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        races = SMSRace.list_races()
+        races = SMSRace.list_races(user.checkpoint_id)
         |> Enum.map(&{&1.name, &1.id})
         render(conn, "new.html", changeset: changeset, races: races)
     end
@@ -36,14 +39,16 @@ defmodule SmsraceWeb.CheckpointController do
   end
 
   def edit(conn, %{"id" => id}) do
+    user = conn.assigns.current_user
     checkpoint = SMSRace.get_checkpoint!(id)
     changeset = SMSRace.change_checkpoint(checkpoint)
-    races = SMSRace.list_races()
+    races = SMSRace.list_races(user.organization_id)
     |> Enum.map(&{&1.name, &1.id})
     render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset, races: races)
   end
 
   def update(conn, %{"id" => id, "checkpoint" => checkpoint_params}) do
+    user = conn.assigns.current_user
     checkpoint = SMSRace.get_checkpoint!(id)
 
     case SMSRace.update_checkpoint(checkpoint, checkpoint_params) do
@@ -53,7 +58,7 @@ defmodule SmsraceWeb.CheckpointController do
         |> redirect(to: Routes.checkpoint_path(conn, :show, checkpoint))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        races = SMSRace.list_races()
+        races = SMSRace.list_races(user.organization_id)
         |> Enum.map(&{&1.name, &1.id})
         render(conn, "edit.html", checkpoint: checkpoint, changeset: changeset, races: races)
     end

@@ -13,6 +13,11 @@
   <%= select f, :type, ["start", "checkpoint", "finish", "pre-start"], class: "p-2" %>
   <%= error_tag f, :type %>
 
+  <%= label f, :number, class: "p-2"  %>
+  <%= number_input f, :number, class: "p-2"  %>
+  <%= error_tag f, :number %>
+
+
   <%= label f, :distance, class: "p-2"  %>
   <%= number_input f, :distance, step: "any", class: "p-2"  %>
   <%= error_tag f, :distance %>

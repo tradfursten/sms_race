@@ -40,6 +40,7 @@ defmodule SmsraceWeb.Router do
     resources "/checkpoints", CheckpointController
 
     live "/", PageLive, :index
+    live "/organizations", OrganizationLive
   end
 
   scope "/", SmsraceWeb do

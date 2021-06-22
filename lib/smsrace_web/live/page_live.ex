@@ -6,14 +6,41 @@ defmodule SmsraceWeb.PageLive do
   @impl true
   def mount(_params, session, socket) do
     IO.inspect(session)
-    Phoenix.PubSub.subscribe(Smsrace.PubSub, "messages")
-    participants = Smsrace.SMSRace.list_participants()
-    races = Smsrace.SMSRace.list_races_with_checkpoints
-    selection = :messages
-    socket = socket
-    |> assign(selection: selection, scope: :unhandled, participants: participants, races: races, query: "")
-    |> update_messages()
-    {:ok, socket}
+    # On mount:
+    # Check that we are a logged in  user and have a session user id
+    # Pull our current races (somehow!)
+    redirect = case connected?(socket) do
+      true ->
+        user = Smsrace.Accounts.get_user_by_session_token(session["user_token"])
+        case user.organization_id do
+          nil ->
+            {:redirect}
+          _ ->
+            case Smsrace.Accounts.get_organization(user.organization_id) do
+              nil ->
+                {:redirect}
+              organization ->
+                organization.number |> Smsrace.TopicHelper.subscribe_message()
+                {:ok, organization}
+            end
+        end
+      false ->
+        {:noop}
+    end
+    case redirect do
+      {:ok, organization} ->
+        participants = Smsrace.Participant.list_participants(organization.id)
+        races = Smsrace.SMSRace.list_races_with_checkpoints(organization.id)
+        selection = :messages
+        socket = socket
+        |> assign(selection: selection, scope: :unhandled, participants: participants, races: races, query: "", number: organization.number)
+        |> update_messages()
+        {:ok, socket}
+      {:noop} ->
+        {:ok, assign(socket, selection: :message, scope: :unhandled, participants: [], races: [], query: "")}
+      {:redirect} ->
+        {:ok, push_redirect(socket, to: "/organizations")}
+    end
   end
 
   @impl true
@@ -78,7 +105,7 @@ defmodule SmsraceWeb.PageLive do
   def handle_event("select-checkpoint", %{"message" => message_id}, socket) do
     selection = :checkpoints
     message = Smsrace.SMSRace.get_message_with_passage!(String.to_integer(message_id))
-    participant = Smsrace.SMSRace.get_participant_with_passages!(message.passage.participant_id)
+    participant = Smsrace.Participant.get_participant_with_passages!(message.passage.participant_id)
     [selected_race ] = socket.assigns.races
     |> Enum.filter(&(&1.id == participant.race_id))
     {:noreply, assign(socket, selection: selection, selected_message: message, selected_race: selected_race, selected_participant: participant)}
@@ -102,6 +129,7 @@ defmodule SmsraceWeb.PageLive do
     selection = :messages
     message = Smsrace.SMSRace.get_message_with_passage!(message_id)
     Smsrace.SMSRace.update_message(message, %{deleted: DateTime.utc_now()})
+    Smsrace.SMSRace.delete_passage(message.passage)
     socket = socket
     |> assign(selection: selection)
     |> update_messages()
@@ -134,11 +162,16 @@ defmodule SmsraceWeb.PageLive do
   end
 
   defp update_messages(socket) do
-    messages = case socket.assigns.scope do
-      :all -> Smsrace.SMSRace.list_messages_sorted(:all)
-      _ -> Smsrace.SMSRace.list_messages_sorted()
+    case socket.assigns.number do
+      nil ->
+        assign(socket, messages: [])
+      number ->
+        messages = case socket.assigns.scope do
+          :all -> Smsrace.SMSRace.list_messages_sorted(number, :all)
+          _ -> Smsrace.SMSRace.list_messages_sorted(number)
+        end
+        assign(socket, messages: messages)
     end
-    assign(socket, messages: messages)
   end
 
   defp pretty_print_date(date) do
