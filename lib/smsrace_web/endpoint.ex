@@ -51,4 +51,21 @@ defmodule SmsraceWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug SmsraceWeb.Router
+
+  def init(_key, config) do
+    if config[:load_from_system_env] do
+      port = System.fetch_env!("PORT")
+      secret_key_base = System.fetch_env!("SECRET_KEY_BASE")
+      app_host = System.fetch_env!("APP_HOST")
+      config =
+        config
+        |> Keyword.put(:http, [:inet6, port: port])
+        |> Keyword.put(:secret_key_base, secret_key_base)
+        |> Keyword.put(:url, host: app_host, scheme: "https", port: 443)
+
+      {:ok, config}
+    else
+      {:ok, config}
+    end
+  end
 end

@@ -134,6 +134,10 @@ defmodule Smsrace.SMSRace do
     Race.changeset(race, attrs)
   end
 
+  def start_race(race_id, started_at) do
+
+  end
+
   alias Smsrace.SMSRace.Checkpoint
 
   @doc """

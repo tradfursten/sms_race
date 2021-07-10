@@ -58,8 +58,7 @@ defmodule SmsraceWeb.CheckpointLive do
   def update_passages(socket) do
     race = socket.assigns.race
     checkpoint_id = socket.assigns.checkpoint.id
-    passages = Smsrace.SMSRace.list_passages_by_checkpoint_id(checkpoint_id)
-    |> list_passages_with_difference(race.start)
+    passages = Smsrace.CustomQueries.fetch_passages_for_checkpoint(checkpoint_id)
 
     missing_passages = missing_passages(race.participants, passages)
     assign(socket, passages: passages, missing_passages: missing_passages)
@@ -67,7 +66,7 @@ defmodule SmsraceWeb.CheckpointLive do
 
   def missing_passages(participants, passages) do
     pa = passages
-    |> Enum.map(&(&1.participant_id))
+    |> Enum.map(&(&1["participant_id"]))
 
     participants
     |> Enum.filter(fn p -> Enum.member?(pa, p.id) == false end)

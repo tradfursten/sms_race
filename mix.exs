@@ -51,6 +51,8 @@ defmodule Smsrace.MixProject do
       {:phx_gen_auth, "~> 0.6", only: [:dev], runtime: false},
       {:auto_linker, "~> 1.0"},
       {:tzdata, "~> 1.1"},
+      {:edeliver, "~> 1.8.0"},
+      {:distillery, "~> 2.1"}
     ]
   end
 
