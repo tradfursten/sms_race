@@ -1,0 +1,54 @@
+APP="smsrace"
+
+BUILD_HOST="46.246.30.185"
+BUILD_USER="deploy"
+BUILD_AT="/home/deploy/smsrace/builds"
+
+PRODUCTION_HOSTS="46.246.30.185"
+PRODUCTION_USER="deploy"
+DELIVER_TO="/home/deploy/smsrace"
+
+pre_erlang_clean_compile() {
+  status "Installing NPM dependencies"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd '$BUILD_AT'
+    npm install --prefix ./assets $SILENCE
+  "
+
+  status "Building static files"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd '$BUILD_AT'
+    mkdir -p priv/static
+    npm run deploy --prefix ./assets $SILENCE
+  "
+
+  status "Running phx.digest.clean"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd '$BUILD_AT'
+    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phx.digest.clean $SILENCE
+  "
+    status "Running phx.digest"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd '$BUILD_AT'
+    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phx.digest $SILENCE
+  "
+}
+
+post_extract_release_archive() {
+  status "Removing release version start_erl.data file"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    if [ -f /home/deploy/smsrace/smsrace/var/start_erl.data ]; then
+      rm /home/deploy/smsrace/smsrace/var/start_erl.data
+    fi
+  "
+}
