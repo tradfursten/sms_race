@@ -13,7 +13,7 @@ config :smsrace, SmsraceWeb.Endpoint,
   load_from_system_env: true,
   server: true,
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["//" <> System.get_env("APP_NAME") <> ".gigalixirapp.com"]
+  check_origin: ["//smsrace.racepace.net"]
 
 
 config :smsrace, Smsrace.Repo,
