@@ -20,7 +20,7 @@ defmodule Smsrace.MixProject do
   def application do
     [
       mod: {Smsrace.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :edeliver]
     ]
   end
 
@@ -52,7 +52,7 @@ defmodule Smsrace.MixProject do
       {:auto_linker, "~> 1.0"},
       {:tzdata, "~> 1.1"},
       {:edeliver, "~> 1.8.0"},
-      {:distillery, "~> 2.1"}
+      {:distillery, "~> 2.1", warn_missing: false}
     ]
   end
 
