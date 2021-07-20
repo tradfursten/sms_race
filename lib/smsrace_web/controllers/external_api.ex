@@ -7,7 +7,7 @@ defmodule SmsraceWeb.ExternalApiController do
   alias Smsrace.SMSRace
 
   def create(conn, %{"id" => id} = params) do
-    Logger.debug "Var value: #{inspect(params)}"
+    Logger.info "Var value: #{inspect(params)}"
     new_message = params
     |> Map.delete("id")
     |> Map.put("api_id", id)
