@@ -163,6 +163,7 @@ defmodule Smsrace.SMSRace do
     # todo match ignore case
     code = String.downcase(code)
     query = from c in Checkpoint, where: c.code == ^code and c.race_id == ^race_id, select: c
+    print_sql(query)
     Repo.all(query)
   end
 
@@ -497,5 +498,11 @@ defmodule Smsrace.SMSRace do
   """
   def change_message(%Message{} = message, attrs \\ %{}) do
     Message.changeset(message, attrs)
+  end
+
+
+  def print_sql(queryable) do
+    IO.inspect(Ecto.Adapters.SQL.to_sql(:all, Repo, queryable))
+    queryable
   end
 end
