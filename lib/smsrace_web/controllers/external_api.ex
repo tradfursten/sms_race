@@ -15,7 +15,7 @@ defmodule SmsraceWeb.ExternalApiController do
     case SMSRace.create_message(new_message) do
       {:ok, %{id: message_id, from: from, message: message, created: created} = persisted_message} ->
         participant = Smsrace.Participant.find_participant(from)
-        checkpoint = find_checkpoint(message, participant)
+        checkpoint = find_checkpoint(String.trim(message), participant)
         case create_passage(participant, checkpoint, created, message_id) do
           {:ok, %{participant_id: _participant_id, checkpoint_id: nil}} ->
             persisted_message
