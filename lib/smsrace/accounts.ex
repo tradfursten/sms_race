@@ -362,4 +362,10 @@ defmodule Smsrace.Accounts do
   def get_organization(organization_id) do
     Repo.get(Organization, organization_id)
   end
+
+  def find_organization_by_incomming(incomming) do
+    Organization
+    |> where(number: ^incomming)
+    |> Repo.one()
+  end
 end

@@ -28,14 +28,18 @@ defmodule SmsraceWeb.ExternalApiController do
         end
         conn
         |> send_resp(200, "")
-      {:error, %Ecto.Changeset{} = _changeset} ->
+      _ ->
         conn
         |> send_resp(500, "Could not save message")
     end
   end
 
-  def incomming_call(conn, _params) do
-    json(conn, %{"connect" => "+46734348420"})
+  def incomming_call(conn, %{"to" => to}) do
+    connect_to = case Smsrace.Accounts.find_organization_by_incomming(to) do
+      %{emergency: emergency} -> emergency
+      o -> "+46734348420"
+    end
+    json(conn, %{"connect" => connect_to})
   end
 
   defp find_checkpoint(_message, []), do: []
