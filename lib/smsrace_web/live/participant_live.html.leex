@@ -4,22 +4,22 @@
 <table class="md:col-start-2 md:col-span-4 col-start-1 col-span-6 table-auto divide-y divided-gray-200">
   <thead class="bg-gray-50">
     <tr>
-      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
       <%= if @owns_race do %>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
       <% end %>
     </tr>
   </thead>
   <tbody class="bg-white divide-y divide-gray-200">
   <%= for passage <- @passages do %>
     <tr>
-      <td class="px-6 py-4 whitespace-nowrap"><%= live_redirect passage.checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, passage.checkpoint_id), class: "text-blue-400 underline" %></td>
-      <td class="px-6 py-4 whitespace-nowrap"><%= passage.duration %></td>
-      <td class="px-6 py-4 whitespace-nowrap"><%= pretty_print_date(passage.at) %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect passage.checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, passage.checkpoint_id), class: "text-blue-400 underline" %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= passage.duration %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= pretty_print_date(passage.at) %></td>
       <%= if @owns_race do %>
-        <td class="px-6 py-4 whitespace-nowrap">
+        <td class="px-1 md:px-6 py-4 whitespace-nowrap">
           <button data-confirm="Are you sure that you want to delete the passage for <%= @participant.name %>?" phx-click="delete-passage" phx-value-passage_id="<%= passage.id %>" >
             <i class="fas fa-trash-alt cursor-pointer"></i>
           </button>
@@ -32,18 +32,18 @@
 <table class="md:col-start-2 md:col-span-4 col-start-1 col-span-6 table-auto divide-y divided-gray-200">
   <thead class="bg-gray-50">
     <tr>
-      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
       <%= if @owns_race do %>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
       <% end %>
     </tr>
   </thead>
   <tbody class="bg-white divide-y divide-gray-200">
   <%= for {checkpoint, i} <- Enum.with_index(@missing_checkpoints) do %>
     <tr>
-      <td class="px-6 py-4 whitespace-nowrap"><%= live_redirect checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, checkpoint.id), class: "text-blue-400 underline" %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, checkpoint.id), class: "text-blue-400 underline" %></td>
       <%= if @owns_race do %>
-        <td class="px-6 py-4 whitespace-nowrap" x-data="{ show_edit: false, date: new Date().toISOString().slice(0,16) }" >
+        <td class="px-1 md:px-6 py-4 whitespace-nowrap" x-data="{ show_edit: false, date: new Date().toISOString().slice(0,16) }" >
           <i class="fas fa-plus p-2 cursor-pointer" x-show="show_edit == false" x-on:click="show_edit = true"></i>
           <div x-show="show_edit == true">
             <form phx-submit="add-passage">
