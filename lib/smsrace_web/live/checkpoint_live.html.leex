@@ -22,7 +22,7 @@
       <td class="px-6 py-4 whitespace-nowrap"><%= passage["behind"] %></td>
       <%= if @owns_race do %>
         <td class="px-6 py-4 whitespace-nowrap">
-          <button data-confirm="Are you sure that you want to delete the passage for <%= passage["name"] %>?" phx-click="delete-passage" phx-value-message="<%= passage["id"] %>" >
+          <button data-confirm="Are you sure that you want to delete the passage for <%= passage["name"] %>?" phx-click="delete-passage" phx-value-id="<%= passage["id"] %>" >
             <i class="fas fa-trash-alt cursor-pointer"></i>
           </button>
         </td>

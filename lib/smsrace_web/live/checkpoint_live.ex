@@ -35,7 +35,7 @@ defmodule SmsraceWeb.CheckpointLive do
   end
 
   @impl true
-  def handle_info({:passage_saved, _}, %{assigns: %{messages: _}} = socket) do
+  def handle_info({:passage_saved, _}, socket) do
     socket = socket
     |> update_passages()
     {:noreply, socket}
