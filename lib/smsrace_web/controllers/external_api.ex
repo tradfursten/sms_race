@@ -37,7 +37,7 @@ defmodule SmsraceWeb.ExternalApiController do
   def incomming_call(conn, %{"to" => to}) do
     connect_to = case Smsrace.Accounts.find_organization_by_incomming(to) do
       %{emergency: emergency} -> emergency
-      o -> "+46734348420"
+      _ -> "+46734348420"
     end
     json(conn, %{"connect" => connect_to})
   end
