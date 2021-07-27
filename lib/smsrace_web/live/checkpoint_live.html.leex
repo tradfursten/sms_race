@@ -50,11 +50,11 @@
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect participant.name, to: Routes.live_path(@socket, SmsraceWeb.ParticipantLive, participant.id), class: "text-blue-400 underline" %></td>
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= participant.status %></td>
       <%= if @owns_race do %>
-        <td class="px-1 md:px-6 py-4 whitespace-nowrap" x-data="{ show_edit: false, date: new Date().toISOString().slice(0,16) }" >
+        <td class="px-1 md:px-6 py-4 whitespace-nowrap" x-data="{ show_edit: false }" >
           <i class="fas fa-plus p-2 cursor-pointer" x-show="show_edit == false" x-on:click="show_edit = true"></i>
           <div x-show="show_edit == true">
             <form phx-submit="add-passage">
-              <input type="datetime-local" id="passage_at" name="passage_at" x-model="date">
+              <input type="datetime-local" id="passage_at" name="passage_at">
               <input type="hidden" id="participant_id" name="participant_id" value="<%= participant.id %>">
               <button type="submit"><i class="fas fa-check p-2 cursor-pointer text-green-500" x-on:click="show_edit = false"></i></button>
               <i class="fas fa-times p-2 cursor-pointer" x-on:click="show_edit = false"></i>

@@ -1,10 +1,8 @@
 <h1 class="text-2xl p-4"><%= @race.name %></h1>
 <%= if @owns_race do %>
-<div x-data="{date: new Date().toISOString().slice(0,16) }">
 <h2 class="text-xl p-4">Start race</h2>
-            <form phx-submit="start-race">
-              <input type="datetime-local" id="start_at" name="start_at" x-model="date">
-              <button type="submit"><i class="fas fa-check p-2 cursor-pointer text-green-500" x-on:click="show_edit = false"></i></button>
-            </form>
-</div>
+<form phx-submit="start-race">
+  <input type="datetime-local" id="start_at" name="start_at">
+  <button type="submit"><i class="fas fa-check p-2 cursor-pointer text-green-500" x-on:click="show_edit = false"></i></button>
+</form>
 <% end %>

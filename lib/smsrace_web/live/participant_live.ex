@@ -10,12 +10,18 @@ defmodule SmsraceWeb.ParticipantLive do
     |> Enum.filter(fn p -> is_nil(p.checkpoint) == false end)
     |> Enum.find(&(&1.checkpoint.type == "start"))
 
-    passages = participant.passages
-    |> Enum.filter(fn p -> !is_nil(p.checkpoint) end)
-    |> list_passages_with_difference(start)
-    |> Enum.sort(fn p1, p2 -> p1.duration_s >= p2.duration_s end)
-    |> Enum.reverse()
-
+    passages = case start do
+      nil ->  participant.passages
+        |> Enum.filter(fn p -> !is_nil(p.checkpoint) end)
+        |> Enum.map(fn p ->
+          p |> Map.put(:duration, "Missing start")
+        end)
+      start -> participant.passages
+        |> Enum.filter(fn p -> !is_nil(p.checkpoint) end)
+        |> list_passages_with_difference(start)
+        |> Enum.sort(fn p1, p2 -> p1.duration_s >= p2.duration_s end)
+        |> Enum.reverse()
+    end
 
     missing_checkpoints = race.checkpoints
     |> missing_passages(participant.passages)
@@ -49,7 +55,12 @@ defmodule SmsraceWeb.ParticipantLive do
 
   @impl true
   def handle_event("add-passage", %{"passage_at" => passage_at, "checkpoint_id" => checkpoint_id}, socket) do
-    Smsrace.SMSRace.create_passage(%{checkpoint_id: checkpoint_id, at: passage_at, participant_id: socket.assigns.participant.id})
+    at = passage_at
+    |> fn n -> n <> ":00" end.()
+    |> NaiveDateTime.from_iso8601!()
+    |> DateTime.from_naive!(socket.assigns.race.timezone)
+    |> DateTime.shift_zone!("Etc/UTC")
+    Smsrace.SMSRace.create_passage(%{checkpoint_id: checkpoint_id, at: at, participant_id: socket.assigns.participant.id})
     {:noreply, socket}
   end
 
@@ -102,8 +113,12 @@ defmodule SmsraceWeb.ParticipantLive do
   defp list_passages_with_difference([], _), do: []
 
 
-  def pretty_print_date(date) do
-    :io_lib.format("~2..0B:~2..0B:~2..0B", [date.hour, date.minute, date.second])
+
+  def pretty_print_date(race, date) do
+    d = date
+    |> DateTime.shift_zone!(race.timezone)
+    |> DateTime.to_naive()
+    :io_lib.format("~2..0B:~2..0B:~2..0B", [d.hour, d.minute, d.second])
     |> IO.iodata_to_binary()
   end
 end
