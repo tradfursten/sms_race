@@ -42,9 +42,13 @@ defmodule SmsraceWeb.CheckpointLive do
   end
 
   @impl true
-  def handle_event("add-passage", %{"passage_at" => passage_at, "participant_id" => participant_id} = params, socket) do
-    IO.inspect(params)
-    Smsrace.SMSRace.create_passage(%{checkpoint_id: socket.assigns.checkpoint.id, at: passage_at, participant_id: participant_id})
+  def handle_event("add-passage", %{"passage_at" => passage_at, "participant_id" => participant_id}, socket) do
+    at = passage_at
+    |> fn n -> n <> ":00" end.()
+    |> NaiveDateTime.from_iso8601!()
+    |> DateTime.from_naive!(socket.assigns.race.timezone)
+    |> DateTime.shift_zone!("Etc/UTC")
+    Smsrace.SMSRace.create_passage(%{checkpoint_id: socket.assigns.checkpoint.id, at: at, participant_id: participant_id})
     {:noreply, socket}
   end
 

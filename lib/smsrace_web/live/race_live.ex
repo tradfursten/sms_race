@@ -1,9 +1,10 @@
 defmodule SmsraceWeb.RaceLive do
   use SmsraceWeb, :live_view
 
+  @impl true
   def mount(%{"id" => race_id}, session, socket) do
 
-    race = Smsrace.SMSRace.get_race_with_participants!(race_id)
+    race = Smsrace.SMSRace.get_race_with_checkpoints_and_participants!(race_id)
 
     owns_race = case connected?(socket) do
       true ->
@@ -20,19 +21,38 @@ defmodule SmsraceWeb.RaceLive do
       false -> false
     end
 
+    checkpoints = race.checkpoints
+    |> Enum.filter(fn c -> Enum.member?(["start", "checkpoint", "finish"], c.type) end)
+    |> Enum.sort(fn c1, c2 -> c1.number <= c2.number end)
 
 
 
     socket = socket
-    |> assign(race: race, owns_race: owns_race)
+    |> assign(race: race, owns_race: owns_race, checkpoints: checkpoints)
     {:ok, socket}
 
   end
 
   @impl true
-  def handle_event("start-race", %{"started-at" => started_at}, socket) do
-    Smsrace.SMSRace.start_race(socket.assigns.race.id, started_at);
+  def handle_event("start-race", %{"start-at" => start_at}, socket) do
+    at = start_at
+    |> fn n -> n <> ":00" end.()
+    |> NaiveDateTime.from_iso8601!()
+    |> DateTime.from_naive!(socket.assigns.race.timezone)
+    |> DateTime.shift_zone!("Etc/UTC")
+    Smsrace.SMSRace.start_race(socket.assigns.race.id, at);
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("start-race", test, socket) do
+    IO.inspect(test)
+    at = test["start_at"]
+    |> fn n -> n <> ":00" end.()
+    |> NaiveDateTime.from_iso8601!()
+    |> DateTime.from_naive!(socket.assigns.race.timezone)
+    |> DateTime.shift_zone!("Etc/UTC")
+    Smsrace.SMSRace.start_race(socket.assigns.race.id, at);
+    {:noreply, socket}
+  end
 end

@@ -7,6 +7,7 @@ defmodule Smsrace.SMSRace do
   alias Smsrace.Repo
 
   alias Smsrace.SMSRace.Race
+  alias Smsrace.SMSRace.Passage
 
   @doc """
   Returns the list of races.
@@ -68,6 +69,11 @@ defmodule Smsrace.SMSRace do
   def get_race_with_checkpoints!(id) do
     get_race!(id)
     |> Repo.preload(:checkpoints)
+  end
+
+  def get_race_with_checkpoints_and_participants!(id) do
+    get_race!(id)
+    |> Repo.preload([:checkpoints, :participants])
   end
   @doc """
   Creates a race.
@@ -135,6 +141,23 @@ defmodule Smsrace.SMSRace do
   end
 
   def start_race(race_id, started_at) do
+    race = get_race_with_checkpoints_and_participants!(race_id)
+    [start |_] = race.checkpoints |> Enum.filter(fn c -> c.type == "start" end)
+    start_id = start.id
+
+    delete_queryable = from p in Passage, where: p.checkpoint_id == ^start_id, select: p
+
+    multi = Ecto.Multi.new()
+    |> Ecto.Multi.delete_all(:delete_all, delete_queryable)
+
+    multi = race.participants
+    |> Enum.map(fn p -> Passage.changeset(%Passage{}, %{checkpoint_id: start.id, participant_id: p.id, at: started_at}) end)
+    |> Enum.with_index()
+    |> Enum.reduce(multi, fn ({changeset, index}, m) ->
+      Ecto.Multi.insert(m, Integer.to_string(index), changeset)
+    end)
+
+    Repo.transaction(multi)
 
   end
 
@@ -248,7 +271,6 @@ defmodule Smsrace.SMSRace do
     Checkpoint.changeset(checkpoint, attrs)
   end
 
-  alias Smsrace.SMSRace.Passage
 
   @doc """
   Returns the list of passages.
