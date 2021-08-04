@@ -60,4 +60,9 @@ defmodule SmsraceWeb.ExternalApiController do
     |> SMSRace.create_passage
   end
 
+  defp create_passage([participant], [_checkpoint | _tail], at, message_id) do
+    %{participant_id: participant.id, at: at, message_id: message_id, participant: participant}
+    |> SMSRace.create_passage
+  end
+
 end
