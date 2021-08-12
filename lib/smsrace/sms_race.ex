@@ -188,7 +188,6 @@ defmodule Smsrace.SMSRace do
     |> String.downcase
     |> String.split([" ", ",", "."])
     query = from c in Checkpoint, where: c.code in (^code) and c.race_id == ^race_id, select: c
-    print_sql(query)
     Repo.all(query)
   end
 

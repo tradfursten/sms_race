@@ -4,6 +4,7 @@ defmodule Smsrace.Participant do
   alias Smsrace.Repo
 
   alias Smsrace.SMSRace.Participant
+  alias Smsrace.SMSRace.Race
 
   require Logger
 
@@ -19,7 +20,8 @@ defmodule Smsrace.Participant do
   def list_participants(organization_id) do
     Participant
     |> join(:left, [p], r in Race, on: p.race_id == r.id and r.organization_id == ^organization_id)
-    |> select([p], {p})
+    |> select([p], p)
+    |> Repo.all()
   end
 
   def list_participants_with_race do

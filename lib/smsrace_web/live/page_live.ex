@@ -174,8 +174,11 @@ defmodule SmsraceWeb.PageLive do
     end
   end
 
-  defp pretty_print_date(date) do
-    :io_lib.format("~2..0B:~2..0B:~2..0B", [date.hour, date.minute, date.second])
+  def pretty_print_date(race, date) do
+    d = date
+    |> DateTime.shift_zone!(race.timezone)
+    |> DateTime.to_naive()
+    :io_lib.format("~2..0B:~2..0B:~2..0B", [d.hour, d.minute, d.second])
     |> IO.iodata_to_binary()
   end
 
