@@ -37,7 +37,7 @@
     <tr>
       <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bib</th>
       <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+      <th scope="col" class="px-1 md:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden">Status</th>
       <%= if @owns_race do %>
         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
       <% end %>
@@ -48,7 +48,7 @@
     <tr>
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= participant.nr %></td>
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect participant.name, to: Routes.live_path(@socket, SmsraceWeb.ParticipantLive, participant.id), class: "text-blue-400 underline" %></td>
-      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= participant.status %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap hidden"><%= participant.status %></td>
       <%= if @owns_race do %>
         <td class="px-1 md:px-6 py-4 whitespace-nowrap" x-data="{ show_edit: false }" >
           <i class="fas fa-plus p-2 cursor-pointer" x-show="show_edit == false" x-on:click="show_edit = true"></i>

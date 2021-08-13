@@ -25,10 +25,11 @@ defmodule SmsraceWeb.RaceLive do
     |> Enum.filter(fn c -> Enum.member?(["start", "checkpoint", "finish"], c.type) end)
     |> Enum.sort(fn c1, c2 -> c1.number <= c2.number end)
 
+    participants = race.participants
 
 
     socket = socket
-    |> assign(race: race, owns_race: owns_race, checkpoints: checkpoints)
+    |> assign(race: race, owns_race: owns_race, checkpoints: checkpoints, participants: participants)
     {:ok, socket}
 
   end

@@ -30,6 +30,7 @@ defmodule SmsraceWeb.Router do
     live "/results/races/:id", RaceLive
     live "/results/checkpoints/:id", CheckpointLive
     live "/results/participants/:id", ParticipantLive
+    live "/results/races", CurrentRacesLive
   end
 
   scope "/", SmsraceWeb do

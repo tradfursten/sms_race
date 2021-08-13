@@ -524,6 +524,7 @@ defmodule Smsrace.SMSRace do
   end
 
 
+  @spec print_sql(any) :: any
   def print_sql(queryable) do
     IO.inspect(Ecto.Adapters.SQL.to_sql(:all, Repo, queryable))
     queryable

@@ -6,9 +6,21 @@
   <button type="submit"><i class="fas fa-check p-2 cursor-pointer text-green-500" x-on:click="show_edit = false"></i></button>
 </form>
 <% end %>
+<div class="grid md:grid-cols-2 grid-cols-1">
+<div>
 <h2 class="text-xl p-4">Checkpoints</h2>
 <ul>
   <%= for {checkpoint, i} <- Enum.with_index(@checkpoints) do %>
-      <li class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, checkpoint.id), class: "text-blue-400 underline" %></li>
+      <li class="px-1 md:px-4 py-1 whitespace-nowrap"><%= live_redirect checkpoint.name, to: Routes.live_path(@socket, SmsraceWeb.CheckpointLive, checkpoint.id), class: "text-blue-400 underline" %></li>
   <% end %>
 </ul>
+</div>
+<div>
+<h2 class="text-xl p-4">Participants</h2>
+<ul>
+  <%= for {participant, i} <- Enum.with_index(@participants) do %>
+      <li class="px-1 md:px-4 py-1 whitespace-nowrap"><%= live_redirect participant.name, to: Routes.live_path(@socket, SmsraceWeb.ParticipantLive, participant.id), class: "text-blue-400 underline" %></li>
+  <% end %>
+</ul>
+</div>
+</div>

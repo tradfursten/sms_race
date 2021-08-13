@@ -13,11 +13,13 @@ defmodule SmsraceWeb.ParticipantLive do
     passages = case start do
       nil ->  participant.passages
         |> Enum.filter(fn p -> !is_nil(p.checkpoint) end)
+        |> Enum.filter(fn p -> Enum.member?(["start", "finish", "checkpoint"], p.checkpoint.type) end)
         |> Enum.map(fn p ->
           p |> Map.put(:duration, "Missing start")
         end)
       start -> participant.passages
         |> Enum.filter(fn p -> !is_nil(p.checkpoint) end)
+        |> Enum.filter(fn p -> Enum.member?(["start", "finish", "checkpoint"], p.checkpoint.type) end)
         |> list_passages_with_difference(start)
         |> Enum.sort(fn p1, p2 -> p1.duration_s >= p2.duration_s end)
         |> Enum.reverse()
