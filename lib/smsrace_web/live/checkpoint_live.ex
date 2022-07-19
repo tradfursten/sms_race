@@ -63,6 +63,7 @@ defmodule SmsraceWeb.CheckpointLive do
     race = socket.assigns.race
     checkpoint_id = socket.assigns.checkpoint.id
     passages = Smsrace.CustomQueries.fetch_passages_for_checkpoint(checkpoint_id)
+    |> list_passages_with_difference()
 
     missing_passages = missing_passages(race.participants, passages)
     assign(socket, passages: passages, missing_passages: missing_passages)
@@ -77,13 +78,11 @@ defmodule SmsraceWeb.CheckpointLive do
   end
 
 
-  defp list_passages_with_difference([first | _tail] = passages, start) do
+  defp list_passages_with_difference([first | _tail] = passages) do
     passages
     |> Enum.map(fn p ->
       p
-      |> Map.from_struct
-      |> Map.put(:duration, Seconds.to_hh_mm_ss(DateTime.diff(p.at, start)))
-      |> Map.put(:behind, Seconds.to_hh_mm_ss(DateTime.diff(p.at, first.at)))
+      |> Map.put(:behind, Seconds.to_hh_mm_ss((p |> Map.get("duration") |> Map.get(:secs)) - (first |> Map.get("duration") |> Map.get(:secs))))
     end)
   end
 

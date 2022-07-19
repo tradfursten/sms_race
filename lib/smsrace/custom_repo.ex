@@ -14,6 +14,7 @@ defmodule Smsrace.CustomQueries do
     |> join(:left, [p, p2, p3], c in Checkpoint, on: p3.checkpoint_id == c.id)
     |> where([p, p2, p3, c], p.checkpoint_id == ^checkpoint_id and c.type == "start")
     |> select([p, p2, p3], %{"name" => p2.name, "participant_id" => p.participant_id, "at" => p.at, "duration" => p.at - p3.at, "id" => p.id})
+    |> order_by(asc: 3)
     |> Repo.all()
   end
 

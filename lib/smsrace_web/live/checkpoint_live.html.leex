@@ -19,7 +19,7 @@
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= i + 1 %></td>
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= live_redirect passage["name"], to: Routes.live_path(@socket, SmsraceWeb.ParticipantLive, passage["participant_id"]), class: "text-blue-400 underline" %></td>
       <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= Seconds.to_hh_mm_ss(passage["duration"].secs) %></td>
-      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= passage["behind"] %></td>
+      <td class="px-1 md:px-6 py-4 whitespace-nowrap"><%= passage[:behind] %></td>
       <%= if @owns_race do %>
         <td class="px-1 md:px-6 py-4 whitespace-nowrap">
           <button data-confirm="Are you sure that you want to delete the passage for <%= passage["name"] %>?" phx-click="delete-passage" phx-value-id="<%= passage["id"] %>" >
