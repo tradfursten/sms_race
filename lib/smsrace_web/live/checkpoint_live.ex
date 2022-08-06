@@ -86,6 +86,7 @@ defmodule SmsraceWeb.CheckpointLive do
     end)
   end
 
+
   defp list_passages_with_difference([], _), do: []
 
 end
