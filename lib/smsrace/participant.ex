@@ -146,4 +146,6 @@ defmodule Smsrace.Participant do
   defp update_participant_status_by_checkpoint(_,_,_) do
   end
 
+
+
 end

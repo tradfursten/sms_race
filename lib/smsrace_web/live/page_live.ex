@@ -63,9 +63,14 @@ defmodule SmsraceWeb.PageLive do
     message = socket.assigns.selected_message
     %{participant_id: participant_id, at: message.created, message_id: message.id}
     |> Smsrace.SMSRace.create_passage
+
+    Smsrace.Participant.get_participant!(participant_id)
+    |> Smsrace.Participant.update_participant(%{phonenumber: message.from})
+
     socket = socket
     |> assign(selection: selection)
     |> update_messages()
+
     {:noreply, socket}
   end
 
